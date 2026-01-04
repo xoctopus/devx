@@ -1,0 +1,131 @@
+
+# go package info
+MODULE_PATH    := $(shell cat go.mod | grep ^module -m 1 | awk '{ print $$2; }' || '')
+MODULE_NAME    := $(shell basename $(MODULE_PATH))
+TEST_IGNORES   := "_gen.go|.pb.go|_mock.go|_genx_|main.go|testing.go|example/"
+FORMAT_IGNORES := ".git/,.xgo/,*.pb.go,*_genx_*"
+
+# git repository info
+IS_GIT_REPO := $(shell git rev-parse --is-inside-work-tree >/dev/null 2>&1 && echo 1 || echo 0)
+ifeq ($(IS_GIT_REPO),1)
+GIT_COMMIT := $(shell git rev-parse --short HEAD 2>/dev/null || echo "")
+GIT_TAG    := $(shell git describe --tags --abbrev=0 2>/dev/null || echo "")
+GIT_BRANCH := $(shell git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "")
+else
+GIT_COMMIT := ""
+GIT_TAG    := ""
+GIT_BRANCH := ""
+endif
+BUILD_AT=$(shell date "+%Y%m%d%H%M%S")
+
+# global env variables
+export GOWORK := off
+
+# go build tools
+GOTEST  := go
+GOBUILD := go
+
+# dependencies flags
+DEP_GOLANGCI_LINT     := $(shell type golangci-lint > /dev/null 2>&1 && echo $$?)
+DEP_GOIMPORTS_REVISER := $(shell type goimports-reviser > /dev/null 2>&1 && echo $$?)
+DEP_GIT_CHGLOG        := $(shell type git-chglog > /dev/null 2>&1 && echo $$?)
+DEP_DEVGEN            := $(shell type devgen > /dev/null 2>&1 && echo $$?)
+
+show:
+	@echo "module:"
+	@echo "	path=$(MODULE_PATH)"
+	@echo "	module=$(MODULE_NAME)"
+	@echo "git:"
+	@echo "	commit_id=$(GIT_COMMIT)"
+	@echo "	tag=$(GIT_TAG)"
+	@echo "	branch=$(GIT_BRANCH)"
+	@echo "	build_time=$(BUILD_AT)"
+	@echo "	name=$(MODULE_NAME)"
+	@echo "tools:"
+	@echo "	build=$(GOBUILD)"
+	@echo "	test=$(GOTEST)"
+	@echo "	golangci-lint=$(shell which golangci-lint) $(DEP_GOLANGCI_LINT)"
+	@echo "	goimports-reviser=$(shell which goimports-reviser) $(DEP_GOIMPORTS_REVISER)"
+	@echo "	git-chglog=$(shell which git-chglog) $(DEP_GIT_CHGLOG)"
+	@echo "	devgen=$(shell which devgen) $(DEP_DEVGEN)"
+
+dep:
+	@echo "==> installing dependencies"
+	@if [ "${DEP_GOLANGCI_LINT}" != "0" ]; then \
+		echo "	golangci-lint for code linting"; \
+		go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@latest; \
+		echo "	DONE."; \
+	fi
+	@if [ "${DEP_GOIMPORTS_REVISER}" != "0" ]; then \
+		echo "	goimports-reviser for code formating"; \
+		go install github.com/incu6us/goimports-reviser/v3@latest; \
+		echo "	DONE."; \
+	fi
+	@if [ "${DEP_GIT_CHGLOG}" != "0" ]; then \
+		echo "	git-chglog for generating changelog"; \
+		go install github.com/git-chglog/git-chglog/cmd/git-chglog@latest; \
+		echo "	DONE."; \
+	fi
+	@if [ "${DEP_DEVGEN}" != "0" ]; then \
+		echo "	devgen for dev configuration generating"; \
+		go install github.com/xoctopus/devgen/cmd/devgen@main; \
+		echo "	DONE."; \
+	fi
+
+upgrade-dep:
+	@echo "==> upgrading dependencies"
+	@echo "	golangci-lint for code linting"
+	@go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@latest
+	@echo "	DONE."
+	@echo "	goimports-reviser for code formating"
+	@go install github.com/incu6us/goimports-reviser/v3@latest
+	@echo "	DONE."
+	@echo "	git-chglog for generating changelog"
+	@go install github.com/git-chglog/git-chglog/cmd/git-chglog@latest
+	@echo "	DONE."
+	@echo "	devgen for dev configuration generating"
+	@go install github.com/xoctopus/devgen/cmd/devgen@main
+	@echo "	DONE."
+
+tidy:
+	@echo "==> installing dependencies"
+	@go mod tidy
+
+test: dep tidy
+	@echo "==> run unit test"
+	@$(GOTEST) test ./... -race -failfast -parallel 1 -gcflags="all=-N -l"
+
+cover: dep tidy
+	@echo "==> run unit test with coverage"
+	@$(GOTEST) test ./... -failfast -parallel 1 -gcflags="all=-N -l" -covermode=count -coverprofile=cover.out
+	@grep -vE $(TEST_IGNORES) cover.out > cover2.out && mv cover2.out cover.out
+
+view-cover: cover
+	@echo "==> run unit test with coverage and view results"
+	@$(GOBUILD) tool cover -html cover.out
+
+ci-cover: cover
+
+
+fmt: dep clean
+	@echo "==> formating code"
+	@goimports-reviser -rm-unused \
+		-imports-order 'std,general,company,project' \
+		-project-name ${MODULE_PATH} \
+		-excludes $(FORMAT_IGNORES) ./...
+
+lint: dep
+	@echo "==> linting"
+	@echo ">>>golangci-lint"
+	@golangci-lint run
+	@echo "done"
+
+clean:
+	@find . -name cover.out | xargs rm -rf
+	@find . -name .xgo | xargs rm -rf
+	@rm -rf build/*
+
+changelog:
+	@git chglog -o CHANGELOG.md || true
+
+pre-commit: dep fmt lint view-cover changelog
