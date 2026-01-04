@@ -59,7 +59,7 @@ var DefaultDepends = Depends{
 	},
 	{
 		Name:        "devgen",
-		Repo:        "github.com/xoctopus/devgen/cmd/devgen",
+		Repo:        "github.com/xoctopus/devx/cmd/devgen",
 		Version:     "main",
 		Type:        TOOL_TYPE__DEVGEN,
 		Description: "dev configuration generating",

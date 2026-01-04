@@ -1,8 +1,10 @@
 package devx
 
 import (
+	"cmp"
 	"fmt"
 	"os"
+	"slices"
 	"strings"
 
 	"github.com/spf13/cobra"
@@ -82,6 +84,7 @@ func (m *Makefile) init(cmd *cobra.Command) {
 
 	m.Depends = append(DefaultDepends, m.Depends...)
 	m.Depends = slicex.UniqueValues(m.Depends, func(e Tool) string { return e.Name })
+	slices.SortFunc(m.Depends, func(a, b Tool) int { return cmp.Compare(a.Name, b.Name) })
 	for i := range m.Depends {
 		m.Depends[i].SetDefault()
 	}
