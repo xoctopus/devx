@@ -28,7 +28,7 @@ func (d *Init) Exec(cmd *cobra.Command, args ...string) (err error) {
 		os.Exit(1)
 	}
 
-	data, err := json.MarshalIndent(DefaultConfig, "", "  ")
+	data, err := json.MarshalIndent(DefaultConfig, "", "\t")
 	if err != nil {
 		cmd.Println(err)
 		os.Exit(1)

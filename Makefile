@@ -53,7 +53,7 @@ dep:
 	@echo "==> installing dependencies"
 	@if [ "${DEP_DEVGEN}" != "0" ]; then \
 		echo "	devgen for dev configuration generating"; \
-		go install github.com/xoctopus/devgen/cmd/devgen@main; \
+		go install github.com/xoctopus/devx/cmd/devgen@main; \
 		echo "	DONE."; \
 	fi
 	@if [ "${DEP_GIT_CHGLOG}" != "0" ]; then \
@@ -75,7 +75,7 @@ dep:
 upgrade-dep:
 	@echo "==> upgrading dependencies"
 	@echo "	devgen for dev configuration generating"
-	@go install github.com/xoctopus/devgen/cmd/devgen@main
+	@go install github.com/xoctopus/devx/cmd/devgen@main
 	@echo "	DONE."
 	@echo "	git-chglog for generating changelog"
 	@go install github.com/git-chglog/git-chglog/cmd/git-chglog@latest
