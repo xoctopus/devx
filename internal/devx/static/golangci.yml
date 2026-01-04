@@ -24,6 +24,5 @@ linters:
         - -ST1000
         - -ST1001
         - -ST1003
-        - -ST1003
     gocyclo:
       min-complexity: 50

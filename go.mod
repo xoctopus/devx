@@ -6,9 +6,8 @@ require (
 	github.com/spf13/cobra v1.10.2
 	github.com/xoctopus/confx v0.2.4
 	github.com/xoctopus/genx v0.1.14
-	github.com/xoctopus/internal v0.0.2
 	github.com/xoctopus/sqlx v0.1.16
-	github.com/xoctopus/x v0.2.10
+	github.com/xoctopus/x v0.2.11
 )
 
 require (

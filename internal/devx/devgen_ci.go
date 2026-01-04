@@ -27,7 +27,7 @@ type CI struct {
 }
 
 func (c *CI) Exec(cmd *cobra.Command, args ...string) (err error) {
-	if c.CI == false {
+	if !c.CI {
 		return nil
 	}
 
