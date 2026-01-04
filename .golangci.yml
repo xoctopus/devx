@@ -21,6 +21,8 @@ linters:
       checks:
         - all
         - -QF1001
+        - -QF1004
+        - -QF1008
         - -ST1000
         - -ST1001
         - -ST1003
