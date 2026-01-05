@@ -88,7 +88,7 @@ upgrade-dep:
 	@echo "	DONE."
 
 tidy:
-	@echo "==> installing dependencies"
+	@echo "==> go mod tidy"
 	@go mod tidy
 
 test: dep tidy

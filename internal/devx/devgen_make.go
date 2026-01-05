@@ -183,7 +183,7 @@ upgrade-dep:
 func (m *Makefile) tidy(w *os.File) {
 	text := `
 tidy:
-	@echo "==> installing dependencies"
+	@echo "==> go mod tidy"
 	@go mod tidy`
 	_, _ = w.WriteString(text + "\n")
 }
