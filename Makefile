@@ -104,7 +104,7 @@ view-cover: cover
 	@echo "==> run unit test with coverage and view results"
 	@$(GOBUILD) tool cover -html cover.out
 
-ci-cover: cover
+ci-cover: lint cover
 
 
 fmt: dep clean
