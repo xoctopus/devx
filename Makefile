@@ -8,15 +8,15 @@ FORMAT_IGNORES := ".git/,.xgo/,*.pb.go,*_genx_*"
 # git repository info
 IS_GIT_REPO := $(shell git rev-parse --is-inside-work-tree >/dev/null 2>&1 && echo 1 || echo 0)
 ifeq ($(IS_GIT_REPO),1)
-GIT_COMMIT := $(shell git rev-parse --short HEAD 2>/dev/null || echo "")
-GIT_TAG    := $(shell git describe --tags --abbrev=0 2>/dev/null || echo "")
-GIT_BRANCH := $(shell git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "")
+export GIT_COMMIT := $(shell git rev-parse --short HEAD 2>/dev/null || echo "")
+export GIT_TAG    := $(shell git describe --tags --abbrev=0 2>/dev/null || echo "")
+export GIT_BRANCH := $(shell git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "")
 else
-GIT_COMMIT := ""
-GIT_TAG    := ""
-GIT_BRANCH := ""
+export GIT_COMMIT := ""
+export GIT_TAG    := ""
+export GIT_BRANCH := ""
 endif
-BUILD_AT=$(shell date "+%Y%m%d%H%M%S")
+export BUILD_AT := $(shell date "+%Y%m%d%H%M%S")
 
 # global env variables
 export GOWORK := off
@@ -107,6 +107,19 @@ view-cover: cover
 ci-cover: lint cover
 
 
+target_poc:
+	@make -C cmd/poc --no-print-directory install
+
+target_devgen:
+	@make -C cmd/devgen --no-print-directory install
+
+targets: target_poc target_devgen
+
+image_poc:
+	@make -C cmd/poc --no-print-directory image
+
+images: image_poc
+
 fmt: dep clean
 	@echo "==> formating code"
 	@goimports-reviser -rm-unused \
@@ -128,4 +141,4 @@ clean:
 changelog:
 	@git chglog -o CHANGELOG.md || true
 
-pre-commit: dep fmt lint view-cover changelog
+pre-commit: dep fmt lint view-cover changelog targets

@@ -47,6 +47,19 @@ func (v *CI) DocOf(names ...string) ([]string, bool) {
 	return []string{"generates ci configuration"}, true
 }
 
+func (v *Code) DocOf(names ...string) ([]string, bool) {
+	if len(names) > 0 {
+		switch names[0] {
+		case "Entry":
+			return []string{"generator entry, default use ./..."}, true
+		case "Name":
+			return []string{"generator names"}, true
+		}
+		return []string{}, false
+	}
+	return []string{"help code generating"}, true
+}
+
 func (v *Init) DocOf(names ...string) ([]string, bool) {
 	if len(names) > 0 {
 		return []string{}, false
@@ -65,6 +78,19 @@ func (v *Lint) DocOf(names ...string) ([]string, bool) {
 	return []string{"generates lint configuration"}, true
 }
 
+func (v *Target) DocOf(names ...string) ([]string, bool) {
+	if len(names) > 0 {
+		switch names[0] {
+		case "Name":
+			return []string{}, true
+		case "Entry":
+			return []string{}, true
+		}
+		return []string{}, false
+	}
+	return []string{}, true
+}
+
 func (v *Makefile) DocOf(names ...string) ([]string, bool) {
 	if len(names) > 0 {
 		switch names[0] {
@@ -78,6 +104,10 @@ func (v *Makefile) DocOf(names ...string) ([]string, bool) {
 			return []string{"hack test entry"}, true
 		case "Depends":
 			return []string{"dependent tools info"}, true
+		case "Target":
+			return []string{"assigns target entries with name and entry.", "eg: '{\"name\":\"poc\",\"entry\":\"cmd/poc\"}'"}, true
+		case "Image":
+			return []string{"Target assigns image entries with name and entry.", "eg: '{\"name\":\"poc\",\"entry\":\"cmd/poc\"}'"}, true
 		}
 		return []string{}, false
 	}

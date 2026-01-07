@@ -16,6 +16,11 @@ import (
 
 var CmdMakefile = cmdx.NewCommand("make", &Makefile{}).Cmd()
 
+type Target struct {
+	Name  string `json:"name"`
+	Entry string `json:"entry"`
+}
+
 // Makefile generates go project Makefile
 type Makefile struct {
 	// TestIgnore patterns unit testing and coverage ignores
@@ -30,6 +35,12 @@ type Makefile struct {
 	HackTest bool `json:"hack_test" cmd:",default=false"`
 	// Depends dependent tools info
 	Depends Depends `json:"depends" cmd:"depends"`
+	// Target assigns target entries with name and entry.
+	// eg: '{"name":"poc","entry":"cmd/poc"}'
+	Target []Target `json:"target" cmd:"target"`
+	// Target assigns image entries with name and entry.
+	// eg: '{"name":"poc","entry":"cmd/poc"}'
+	Image []Target `json:"image" cmd:"image"`
 
 	envs [][2]string
 }
@@ -50,6 +61,8 @@ func (m *Makefile) Exec(cmd *cobra.Command, args ...string) (err error) {
 	m.dep(f)
 	m.tidy(f)
 	m.test(f)
+	m.target(f)
+	m.image(f)
 	m.check(f)
 
 	cmd.Println("==> generated Makefile")
@@ -101,15 +114,15 @@ FORMAT_IGNORES := %q
 # git repository info
 IS_GIT_REPO := $(shell git rev-parse --is-inside-work-tree >/dev/null 2>&1 && echo 1 || echo 0)
 ifeq ($(IS_GIT_REPO),1)
-GIT_COMMIT := $(shell git rev-parse --short HEAD 2>/dev/null || echo "")
-GIT_TAG    := $(shell git describe --tags --abbrev=0 2>/dev/null || echo "")
-GIT_BRANCH := $(shell git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "")
+export GIT_COMMIT := $(shell git rev-parse --short HEAD 2>/dev/null || echo "")
+export GIT_TAG    := $(shell git describe --tags --abbrev=0 2>/dev/null || echo "")
+export GIT_BRANCH := $(shell git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "")
 else
-GIT_COMMIT := ""
-GIT_TAG    := ""
-GIT_BRANCH := ""
+export GIT_COMMIT := ""
+export GIT_TAG    := ""
+export GIT_BRANCH := ""
 endif
-BUILD_AT=$(shell date "+%s")
+export BUILD_AT := $(shell date "+%s")
 `, strings.Join(m.TestIgnore, "|"), strings.Join(m.FormatIgnore, ","), "%Y%m%d%H%M%S")
 
 	_, _ = w.WriteString("\n# global env variables\n")
@@ -229,6 +242,36 @@ hack_dep_stop:
 `)
 }
 
+func (m *Makefile) target(w *os.File) {
+	names := make([]string, 0, len(m.Target))
+	for _, t := range m.Target {
+		_, _ = fmt.Fprintf(w, `
+target_%s:
+	@make -C %s --no-print-directory install
+`, t.Name, t.Entry)
+		names = append(names, "target_"+t.Name)
+	}
+
+	_, _ = fmt.Fprintf(w, `
+targets: %s
+`, strings.Join(names, " "))
+}
+
+func (m *Makefile) image(w *os.File) {
+	names := make([]string, 0, len(m.Target))
+	for _, t := range m.Image {
+		_, _ = fmt.Fprintf(w, `
+image_%s:
+	@make -C %s --no-print-directory image
+`, t.Name, t.Entry)
+		names = append(names, "image_"+t.Name)
+	}
+
+	_, _ = fmt.Fprintf(w, `
+images: %s
+`, strings.Join(names, " "))
+}
+
 func (m *Makefile) check(w *os.File) {
 	text := `
 fmt: dep clean
@@ -252,7 +295,11 @@ clean:
 changelog:
 	@git chglog -o CHANGELOG.md || true
 
-pre-commit: dep fmt lint view-cover changelog
-`
+pre-commit: dep fmt lint view-cover changelog`
+	if len(m.Target) > 0 {
+		text = text + " targets"
+	}
+	text = text + "\n"
+
 	_, _ = w.WriteString(text)
 }

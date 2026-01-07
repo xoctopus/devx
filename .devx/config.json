@@ -52,6 +52,22 @@
 				"type": "DEVGEN",
 				"description": "dev configuration generating"
 			}
+		],
+		"target": [
+			{
+				"name": "demo",
+				"entry": "cmd/demo"
+			},
+			{
+				"name": "devgen",
+				"entry": "cmd/devgen"
+			}
+		],
+		"image": [
+			{
+				"name": "demo",
+				"entry": "cmd/demo"
+			}
 		]
 	},
 	"lint": {
