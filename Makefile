@@ -107,18 +107,18 @@ view-cover: cover
 ci-cover: lint cover
 
 
-target_poc:
-	@make -C cmd/poc --no-print-directory install
+target_demo:
+	@make -C cmd/demo --no-print-directory install
 
 target_devgen:
 	@make -C cmd/devgen --no-print-directory install
 
-targets: target_poc target_devgen
+targets: target_demo target_devgen
 
-image_poc:
-	@make -C cmd/poc --no-print-directory image
+image_demo:
+	@make -C cmd/demo --no-print-directory image
 
-images: image_poc
+images: image_demo
 
 fmt: dep clean
 	@echo "==> formating code"
