@@ -18,6 +18,7 @@ endif
 build:
 	@echo building $(NAME)...
 	@go build -ldflags ${LDFLAGS} -o ${NAME}
+	@echo "$(NAME):$(GIT_BRANCH)@$(GIT_TAG)#$(GIT_COMMIT)_$(BUILD_AT)" > version
 	@cp ${NAME} ${OUT}
 	@echo DONE
 

@@ -2,7 +2,6 @@ package main
 
 import (
 	_ "embed"
-	"runtime/debug"
 	"strings"
 
 	"github.com/spf13/cobra"
@@ -26,11 +25,6 @@ var CmdVersion = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		if Name != "" {
 			cmd.Printf("%s:%s@%s#%s_%s\n", Name, Branch, Version, CommitID, BuildTime)
-			return
-		}
-		inf, _ := debug.ReadBuildInfo()
-		if inf != nil && len(inf.Main.Version) > 0 {
-			cmd.Println(inf.Main.Version)
 			return
 		}
 		if version != "" {
