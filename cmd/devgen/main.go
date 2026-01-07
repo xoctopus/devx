@@ -1,8 +1,6 @@
 package main
 
 import (
-	_ "embed"
-
 	"github.com/spf13/cobra"
 
 	"github.com/xoctopus/devx/internal/devx"
@@ -14,9 +12,6 @@ var (
 	Version   string
 	CommitID  string
 	BuildTime string
-
-	//go:embed version
-	version string
 )
 
 var CmdVersion = &cobra.Command{
