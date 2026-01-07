@@ -24,6 +24,7 @@ var CmdVersion = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		if Name == "" {
 			cmd.Println(version)
+			return
 		}
 		cmd.Printf("%s:%s@%s#%s_%s\n", Name, Branch, Version, CommitID, BuildTime)
 	},
