@@ -293,7 +293,7 @@ clean:
 	@rm -rf build/*
 
 changelog:
-	@git chglog -o CHANGELOG.md || true
+	@git chglog --next-tag HEAD -o CHANGELOG.md || true
 
 pre-commit: dep fmt lint view-cover changelog`
 	if len(m.Target) > 0 {

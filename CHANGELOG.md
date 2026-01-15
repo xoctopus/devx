@@ -1,4 +1,35 @@
 
+<a name="HEAD"></a>
+## [HEAD](https://github.com/xoctopus/devx/compare/v0.0.6...HEAD)
+
+> 2026-01-09
+
+### Chore
+
+* **deps:** bump actions/upload-artifact from 4 to 6 ([#7](https://github.com/xoctopus/devx/issues/7))
+* **deps:** bump github.com/xoctopus/confx from 0.2.6 to 0.2.7 ([#8](https://github.com/xoctopus/devx/issues/8))
+
+
+<a name="v0.0.6"></a>
+## [v0.0.6](https://github.com/xoctopus/devx/compare/v0.0.5...v0.0.6)
+
+> 2026-01-07
+
+### Ci
+
+* release
+
+### Feat
+
+* add release workflow
+
+### Fix
+
+* version
+* version
+* version
+
+
 <a name="v0.0.5"></a>
 ## [v0.0.5](https://github.com/xoctopus/devx/compare/v0.0.4...v0.0.5)
 
