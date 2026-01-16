@@ -4,7 +4,7 @@ go 1.25.5
 
 require (
 	github.com/spf13/cobra v1.10.2
-	github.com/xoctopus/confx v0.2.7
+	github.com/xoctopus/confx v0.2.15
 	github.com/xoctopus/genx v0.1.16
 	github.com/xoctopus/sqlx v0.1.16
 	github.com/xoctopus/x v0.2.11
