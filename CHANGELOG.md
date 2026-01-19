@@ -2,12 +2,16 @@
 <a name="HEAD"></a>
 ## [HEAD](https://github.com/xoctopus/devx/compare/v0.0.6...HEAD)
 
-> 2026-01-09
+> 2026-01-15
 
 ### Chore
 
 * **deps:** bump actions/upload-artifact from 4 to 6 ([#7](https://github.com/xoctopus/devx/issues/7))
 * **deps:** bump github.com/xoctopus/confx from 0.2.6 to 0.2.7 ([#8](https://github.com/xoctopus/devx/issues/8))
+
+### Fix
+
+* **devgen:** gen CHANGELOG to HEAD
 
 
 <a name="v0.0.6"></a>

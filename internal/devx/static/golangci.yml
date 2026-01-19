@@ -9,7 +9,8 @@ run:
   tests: false
 
 linters:
-  disable-all: true
+  disable:
+    - unused
   enable:
     - errcheck
     - staticcheck
