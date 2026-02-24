@@ -2,11 +2,17 @@
 <a name="HEAD"></a>
 ## [HEAD](https://github.com/xoctopus/devx/compare/v0.0.7...HEAD)
 
-> 2026-01-28
+> 2026-02-24
 
 ### Chore
 
+* add go vet
 * ignore QF1006
+* **deps:** bump github.com/xoctopus/x from 0.2.11 to 0.3.0
+
+### Doc
+
+* update CHANGELOG
 
 
 <a name="v0.0.7"></a>
