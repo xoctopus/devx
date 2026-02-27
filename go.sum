@@ -13,8 +13,8 @@ github.com/spf13/cobra v1.10.2/go.mod h1:7C1pvHqHw5A4vrJfjNwvOdzYu0Gml16OCs2GRiT
 github.com/spf13/pflag v1.0.9/go.mod h1:McXfInJRrz4CZXVZOBLb0bTZqETkiAhM9Iw0y3An2Bg=
 github.com/spf13/pflag v1.0.10 h1:4EBh2KAYBwaONj6b2Ye1GiHfwjqyROoF4RwYO+vPwFk=
 github.com/spf13/pflag v1.0.10/go.mod h1:McXfInJRrz4CZXVZOBLb0bTZqETkiAhM9Iw0y3An2Bg=
-github.com/xoctopus/confx v0.3.0 h1:rEffp1fHTRTyY/seY9NUPDzOzRlYljcyGcjx0xIZBQg=
-github.com/xoctopus/confx v0.3.0/go.mod h1:rD9CfuNAD4/AD5/GO+0W6r3xHVIzJ/hliZrpkAuC4iQ=
+github.com/xoctopus/confx v0.3.2 h1:nT/wX+ACONn/SDfSbN9+deeCUXN2xiGtjaRTzopzVqc=
+github.com/xoctopus/confx v0.3.2/go.mod h1:FLHfMPUy4x+mObmmq1p3pe1Wec0ZAuCw9SB9DsBIF2I=
 github.com/xoctopus/genx v0.1.16 h1:4PqzLd83JVFXgUoHwBKMHSYUaSmwgRp3AGQfk075M70=
 github.com/xoctopus/genx v0.1.16/go.mod h1:qVlON2kAMjzyo9eNR2gpFiUgkq8RSsHGNogi3LbpuHQ=
 github.com/xoctopus/pkgx v0.1.10 h1:PbmUQCrH8ZJI+eq7+yyuQCR/tJA8F+JYDgEz1XydJn4=
