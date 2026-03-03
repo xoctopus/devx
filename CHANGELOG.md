@@ -6,6 +6,7 @@
 
 ### Chore
 
+* update version
 * add go vet
 * ignore QF1006
 * **deps:** update ci.yml. use minium go1.26
