@@ -6,6 +6,8 @@
 
 ### Chore
 
+* fix typo
+* update version
 * update version
 * rename flag
 * ignore targets and images entry if empty
