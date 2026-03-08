@@ -41,6 +41,8 @@ type Makefile struct {
 	// Target assigns image entries with name and entry.
 	// eg: '{"name":"poc","entry":"cmd/poc"}'
 	Image []Target `json:"image" cmd:"image"`
+	// EnableBenchCover if enable bench in cover
+	EnableBenchCover bool `json:"enableBenchCover" cmd:",default=false"`
 
 	envs [][2]string
 }
@@ -208,6 +210,10 @@ func (m *Makefile) test(w *os.File) {
 	if m.HackTest {
 		dep += " hack_dep_run"
 	}
+	bench := ""
+	if m.EnableBenchCover {
+		bench = "-bench=. "
+	}
 
 	text := fmt.Sprintf(`
 test: %s
@@ -216,7 +222,7 @@ test: %s
 
 cover: %s
 	@echo "==> run unit test with coverage"
-	@$(GOTEST) test ./... -bench=. -failfast -parallel 1 -gcflags="all=-N -l" -covermode=count -coverprofile=cover.out
+	@$(GOTEST) test ./... %s -failfast -parallel 1 -gcflags="all=-N -l" -covermode=count -coverprofile=cover.out
 	@grep -vE $(TEST_IGNORES) cover.out > cover2.out && mv cover2.out cover.out
 
 view-cover: cover
@@ -224,7 +230,7 @@ view-cover: cover
 	@$(GOBUILD) tool cover -html cover.out
 
 ci-cover: lint cover
-`, dep, dep)
+`, dep, dep, bench)
 	_, _ = w.WriteString(text + "\n")
 }
 

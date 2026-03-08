@@ -108,6 +108,8 @@ func (v *Makefile) DocOf(names ...string) ([]string, bool) {
 			return []string{"assigns target entries with name and entry.", "eg: '{\"name\":\"poc\",\"entry\":\"cmd/poc\"}'"}, true
 		case "Image":
 			return []string{"Target assigns image entries with name and entry.", "eg: '{\"name\":\"poc\",\"entry\":\"cmd/poc\"}'"}, true
+		case "EnableBenchCover":
+			return []string{"if enable bench in cover"}, true
 		}
 		return []string{}, false
 	}
