@@ -2,10 +2,12 @@
 <a name="HEAD"></a>
 ## [HEAD](https://github.com/xoctopus/devx/compare/v0.0.7...HEAD)
 
-> 2026-02-25
+> 2026-03-08
 
 ### Chore
 
+* rename flag
+* ignore targets and images entry if empty
 * update version
 * add go vet
 * ignore QF1006
@@ -19,6 +21,11 @@
 ### Doc
 
 * update CHANGELOG
+
+### Feat
+
+* bench with cover option
+* benchmarking with cover
 
 
 <a name="v0.0.7"></a>
