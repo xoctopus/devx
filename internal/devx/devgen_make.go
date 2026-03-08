@@ -42,7 +42,7 @@ type Makefile struct {
 	// eg: '{"name":"poc","entry":"cmd/poc"}'
 	Image []Target `json:"image" cmd:"image"`
 	// EnableBenchCover if enable bench in cover
-	EnableBenchCover bool `json:"enableBenchCover" cmd:",default=false"`
+	EnableBenchCover bool `json:"enable_bench_cover" cmd:",default=false"`
 
 	envs [][2]string
 }
