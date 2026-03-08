@@ -224,7 +224,7 @@ test: %s
 
 cover: %s
 	@echo "==> run unit test with coverage"
-	@$(GOTEST) test ./... %s -failfast -parallel 1 -gcflags="all=-N -l" -covermode=count -coverprofile=cover.out
+	@$(GOTEST) test ./... %s-failfast -parallel 1 -gcflags="all=-N -l" -covermode=count -coverprofile=cover.out
 	@grep -vE $(TEST_IGNORES) cover.out > cover2.out && mv cover2.out cover.out
 
 view-cover: cover
