@@ -6,6 +6,8 @@
 
 ### Chore
 
+* golangci ignore QF1012
+* update version
 * fix typo
 * update version
 * update version
