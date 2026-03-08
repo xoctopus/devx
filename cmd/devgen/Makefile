@@ -1,4 +1,5 @@
-NAME=devgen
+NAME=$(shell basename $(CURDIR))
+DIST := ../../dist/${NAME}
 VERSION_PATH=main
 
 LDFLAGS="-s -w -X ${VERSION_PATH}.Name=${NAME} \
@@ -24,5 +25,5 @@ build:
 
 install: build
 	@echo install to dist...
-	@mkdir -pv ../../dist && mv ${NAME} ${OUT} ../../dist
+	@rm -rf ${DIST} && mkdir -pv ${DIST} && mv ${NAME} ${OUT} ${DIST}
 	@echo DONE

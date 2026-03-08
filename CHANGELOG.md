@@ -6,12 +6,13 @@
 
 ### Chore
 
+* rename flag
 * golangci ignore QF1012
 * update version
 * fix typo
 * update version
 * update version
-* rename flag
+* update version
 * ignore targets and images entry if empty
 * update version
 * add go vet
