@@ -1,24 +1,35 @@
 package devx
 
 import (
+	"bytes"
 	"cmp"
+	_ "embed"
 	"fmt"
+	"io"
 	"os"
+	"path/filepath"
 	"slices"
 	"strings"
 
 	"github.com/spf13/cobra"
 	"github.com/xoctopus/confx/pkg/cmdx"
 	"github.com/xoctopus/x/misc/defers"
+	"github.com/xoctopus/x/misc/must"
 	"github.com/xoctopus/x/slicex"
 	"github.com/xoctopus/x/stringsx"
 )
 
-var CmdMakefile = cmdx.NewCommand("make", &Makefile{}).Cmd()
+var (
+	CmdMakefile = cmdx.NewCommand("make", &Makefile{}).Cmd()
+	//go:embed static/target.mk
+	gTargetMakefile []byte
+	//go:embed static/target.dockerfile
+	gTargetDockerfile []byte
+)
 
 type Target struct {
-	Name  string `json:"name"`
-	Entry string `json:"entry"`
+	Name    string `json:"name"`
+	GenMake bool   `json:"gen_make"`
 }
 
 // Makefile generates go project Makefile
@@ -64,7 +75,7 @@ func (m *Makefile) Exec(cmd *cobra.Command, args ...string) (err error) {
 	m.tidy(f)
 	m.test(f)
 	if len(m.Target) > 0 {
-		m.target(f)
+		m.target(cmd, f)
 		m.image(f)
 	}
 	m.check(f)
@@ -250,13 +261,21 @@ hack_dep_stop:
 `)
 }
 
-func (m *Makefile) target(w *os.File) {
+func (m *Makefile) target(cmd *cobra.Command, w *os.File) {
 	names := make([]string, 0, len(m.Target))
 	for _, t := range m.Target {
+		m.cmdMake(cmd, t)
+		entry := filepath.Join("cmd", t.Name)
+		fi, err := os.Stat(entry)
+		if err != nil && os.IsNotExist(err) || !fi.IsDir() {
+			fmt.Printf("WARN: target entry `%s` is not exists or not a folder\n", entry)
+			continue
+		}
+
 		_, _ = fmt.Fprintf(w, `
 target_%s:
 	@make -C %s --no-print-directory install
-`, t.Name, t.Entry)
+`, t.Name, entry)
 		names = append(names, "target_"+t.Name)
 	}
 
@@ -268,16 +287,28 @@ targets: %s
 func (m *Makefile) image(w *os.File) {
 	names := make([]string, 0, len(m.Target))
 	for _, t := range m.Image {
+		entry := filepath.Join("cmd", t.Name)
 		_, _ = fmt.Fprintf(w, `
 image_%s:
 	@make -C %s --no-print-directory image
-`, t.Name, t.Entry)
+`, t.Name, entry)
 		names = append(names, "image_"+t.Name)
 	}
 
 	_, _ = fmt.Fprintf(w, `
 images: %s
 `, strings.Join(names, " "))
+}
+
+func (m *Makefile) cmdMake(cmd *cobra.Command, t Target) {
+	if !t.GenMake {
+		return
+	}
+	filename := filepath.Join("cmd", t.Name, "Makefile")
+	f := must.NoErrorV(os.OpenFile(filename, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0666))
+	defer func() { _ = f.Close() }()
+	must.NoErrorV(io.Copy(f, bytes.NewReader(gTargetMakefile)))
+	cmd.Printf("==> generated %s\n", filename)
 }
 
 func (m *Makefile) check(w *os.File) {

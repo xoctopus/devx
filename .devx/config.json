@@ -61,7 +61,8 @@
 			},
 			{
 				"name": "devgen",
-				"entry": "cmd/devgen"
+				"entry": "cmd/devgen",
+				"gen_make": true
 			}
 		],
 		"image": [
