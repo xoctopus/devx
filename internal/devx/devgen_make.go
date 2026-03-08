@@ -63,8 +63,10 @@ func (m *Makefile) Exec(cmd *cobra.Command, args ...string) (err error) {
 	m.dep(f)
 	m.tidy(f)
 	m.test(f)
-	m.target(f)
-	m.image(f)
+	if len(m.Target) > 0 {
+		m.target(f)
+		m.image(f)
+	}
 	m.check(f)
 
 	cmd.Println("==> generated Makefile")
