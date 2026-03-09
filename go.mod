@@ -7,7 +7,7 @@ require (
 	github.com/xoctopus/confx v0.4.0
 	github.com/xoctopus/genx v0.2.0
 	github.com/xoctopus/sqlx v0.2.0
-	github.com/xoctopus/x v0.4.0
+	github.com/xoctopus/x v0.4.1
 )
 
 require (
