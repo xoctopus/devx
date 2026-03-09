@@ -141,7 +141,11 @@ export BUILD_AT := $(shell date "+%s")
 `, strings.Join(m.TestIgnore, "|"), strings.Join(m.FormatIgnore, ","), "%Y%m%d%H%M%S")
 
 	_, _ = w.WriteString("\n# global env variables\n")
-	_ = WriteKeyValAlign(w, "export ", ":=", m.envs)
+	// _ = WriteKeyValAlign(w, "export ", ":=", m.envs)
+	for _, v := range m.envs {
+		_, _ = w.WriteString(fmt.Sprintf("%s ?= %s\n", v[0], v[1]))
+		_, _ = w.WriteString(fmt.Sprintf("export %s\n", v[0]))
+	}
 
 	_, _ = w.WriteString("\n# go build tools\n")
 	_ = WriteKeyValAlign(w, "", ":=", DefaultGoTools)

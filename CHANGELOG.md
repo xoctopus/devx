@@ -22,6 +22,7 @@
 
 ### Ci
 
+* optimize devgen/Makefile
 * update config
 
 ### Doc
@@ -30,6 +31,7 @@
 
 ### Feat
 
+* support target make generation
 * bench with cover option
 * benchmarking with cover
 

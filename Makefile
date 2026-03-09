@@ -19,7 +19,8 @@ endif
 export BUILD_AT := $(shell date "+%Y%m%d%H%M%S")
 
 # global env variables
-export GOWORK := off
+GOWORK ?= off
+export GOWORK
 
 # go build tools
 GOTEST  := go
