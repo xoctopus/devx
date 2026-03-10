@@ -2,23 +2,24 @@
 <a name="HEAD"></a>
 ## [HEAD](https://github.com/xoctopus/devx/compare/v0.0.7...HEAD)
 
-> 2026-03-08
+> 2026-03-10
 
 ### Chore
 
-* rename flag
+* update version
+* ignore targets and images entry if empty
 * golangci ignore QF1012
 * update version
 * fix typo
 * update version
 * update version
-* update version
-* ignore targets and images entry if empty
-* update version
-* add go vet
 * ignore QF1006
+* add go vet
+* update version
+* rename flag
 * **deps:** update ci.yml. use minium go1.26
 * **deps:** bump github.com/xoctopus/x from 0.2.11 to 0.3.0
+* **deps:** bump confx,sqlx,x to latest
 
 ### Ci
 
@@ -31,6 +32,7 @@
 
 ### Feat
 
+* support env configs overwritten
 * support target make generation
 * bench with cover option
 * benchmarking with cover
