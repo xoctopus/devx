@@ -2,9 +2,10 @@ package devx
 
 import (
 	"bytes"
-	_ "embed"
 	"io"
 	"os"
+
+	_ "embed"
 
 	"github.com/spf13/cobra"
 	"github.com/xoctopus/confx/pkg/cmdx"

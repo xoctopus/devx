@@ -26,4 +26,7 @@ build:
 install: build
 	@echo install to dist...
 	@rm -rf ${DIST} && mkdir -pv ${DIST} && mv ${NAME} ${OUT} ${DIST}
+	@if [ -d "config" ]; then \
+		cp -r config ${DIST}; \
+	fi
 	@echo DONE

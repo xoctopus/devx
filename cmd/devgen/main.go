@@ -1,8 +1,9 @@
 package main
 
 import (
-	_ "embed"
 	"strings"
+
+	_ "embed"
 
 	"github.com/spf13/cobra"
 

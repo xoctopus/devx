@@ -3,13 +3,14 @@ package devx
 import (
 	"bytes"
 	"cmp"
-	_ "embed"
 	"fmt"
 	"io"
 	"os"
 	"path/filepath"
 	"slices"
 	"strings"
+
+	_ "embed"
 
 	"github.com/spf13/cobra"
 	"github.com/xoctopus/confx/pkg/cmdx"
@@ -320,7 +321,7 @@ func (m *Makefile) check(w *os.File) {
 fmt: dep clean
 	@echo "==> formating code"
 	@goimports-reviser -rm-unused \
-		-imports-order 'std,general,company,project' \
+		-imports-order 'std,dotted,blanked,general,company,project' \
 		-project-name ${MODULE_PATH} \
 		-excludes $(FORMAT_IGNORES) ./...
 

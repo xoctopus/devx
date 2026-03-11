@@ -124,7 +124,7 @@ images: image_demo
 fmt: dep clean
 	@echo "==> formating code"
 	@goimports-reviser -rm-unused \
-		-imports-order 'std,general,company,project' \
+		-imports-order 'std,dotted,blanked,general,company,project' \
 		-project-name ${MODULE_PATH} \
 		-excludes $(FORMAT_IGNORES) ./...
 
