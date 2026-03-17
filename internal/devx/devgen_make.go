@@ -3,14 +3,13 @@ package devx
 import (
 	"bytes"
 	"cmp"
+	_ "embed"
 	"fmt"
 	"io"
 	"os"
 	"path/filepath"
 	"slices"
 	"strings"
-
-	_ "embed"
 
 	"github.com/spf13/cobra"
 	"github.com/xoctopus/confx/pkg/cmdx"
