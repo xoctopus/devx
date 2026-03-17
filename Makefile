@@ -17,6 +17,7 @@ export GIT_TAG    := ""
 export GIT_BRANCH := ""
 endif
 export BUILD_AT := $(shell date "+%Y%m%d%H%M%S")
+export MODULE_PATH
 
 # global env variables
 GOWORK ?= off
@@ -124,7 +125,7 @@ images: image_demo
 fmt: dep clean
 	@echo "==> formating code"
 	@goimports-reviser -rm-unused \
-		-imports-order 'std,dotted,blanked,general,company,project' \
+		-imports-order 'std,general,company,project' \
 		-project-name ${MODULE_PATH} \
 		-excludes $(FORMAT_IGNORES) ./...
 

@@ -139,6 +139,7 @@ export GIT_TAG    := ""
 export GIT_BRANCH := ""
 endif
 export BUILD_AT := $(shell date "+%s")
+export MODULE_PATH
 `, strings.Join(m.TestIgnore, "|"), strings.Join(m.FormatIgnore, ","), "%Y%m%d%H%M%S")
 
 	_, _ = w.WriteString("\n# global env variables\n")
@@ -321,7 +322,7 @@ func (m *Makefile) check(w *os.File) {
 fmt: dep clean
 	@echo "==> formating code"
 	@goimports-reviser -rm-unused \
-		-imports-order 'std,dotted,blanked,general,company,project' \
+		-imports-order 'std,general,company,project' \
 		-project-name ${MODULE_PATH} \
 		-excludes $(FORMAT_IGNORES) ./...
 
