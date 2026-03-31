@@ -56,7 +56,7 @@ jobs:
           mv dist/devgen devgen-${{ github.ref_name }}-${{ matrix.os }}-${{ matrix.arch }}
 
       - name: upload-artifact
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: devgen-${{ github.ref_name }}-${{ matrix.os }}-${{ matrix.arch }}
           path: devgen-${{ github.ref_name }}-${{ matrix.os }}-${{ matrix.arch }}
