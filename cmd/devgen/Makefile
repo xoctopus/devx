@@ -1,6 +1,7 @@
-NAME=$(shell basename $(CURDIR))
-DIST := ../../dist/${NAME}
-VERSION_PATH=main
+NAME         := $(shell basename $(CURDIR))
+DIST         := $(abspath ../../dist/${NAME})
+DIST_NAME    := dist/${NAME}
+VERSION_PATH := main
 
 LDFLAGS="-s -w -X ${VERSION_PATH}.Name=${NAME} \
 	-X ${VERSION_PATH}.Branch=${GIT_BRANCH}   \
@@ -17,7 +18,7 @@ OUT := ${OUT}.exe
 endif
 
 build:
-	@echo building $(NAME)...
+	@echo "==> building $(NAME)..."
 	@go build -ldflags ${LDFLAGS} -o ${NAME}
 	@echo "$(NAME):$(GIT_BRANCH)@$(GIT_TAG)#$(GIT_COMMIT)_$(BUILD_AT)" > version
 	@echo "$(MODULE_PATH)" >> version
@@ -25,8 +26,8 @@ build:
 	@echo DONE
 
 install: build
-	@echo install to dist...
-	@rm -rf ${DIST} && mkdir -pv ${DIST} && mv ${NAME} ${OUT} ${DIST}
+	@echo "==> installing to ${DIST_NAME}"
+	@rm -rf ${DIST} && mkdir -p ${DIST} && mv ${NAME} ${OUT} ${DIST}
 	@if [ -d "config" ]; then \
 		cp -r config ${DIST}; \
 	fi
