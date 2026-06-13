@@ -4,7 +4,7 @@ DIST_NAME    := dist/${NAME}
 VERSION_PATH := main
 
 LDFLAGS="-s -w -X ${VERSION_PATH}.Name=${NAME} \
-	-X ${VERSION_PATH}.Branch=${GIT_BRANCH}   \
+	-X ${VERSION_PATH}.Branch=${GIT_BRANCH}    \
 	-X ${VERSION_PATH}.Version=${GIT_TAG}      \
 	-X ${VERSION_PATH}.CommitID=${GIT_COMMIT}  \
 	-X ${VERSION_PATH}.BuildTime=${BUILD_AT} "
