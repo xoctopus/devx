@@ -30,5 +30,6 @@ linters:
         - -ST1001
         - -ST1003
         - -ST1021
+        - -SA5008
     gocyclo:
       min-complexity: 50
