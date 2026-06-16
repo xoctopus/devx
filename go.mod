@@ -4,13 +4,14 @@ go 1.26.4
 
 require (
 	github.com/spf13/cobra v1.10.2
-	github.com/xoctopus/confx v0.4.6-rc3
+	github.com/xoctopus/confx v0.4.6-rc5
 	github.com/xoctopus/genx v0.2.2-rc1
 	github.com/xoctopus/sqlx v0.3.1-rc2
 	github.com/xoctopus/x v0.4.8
 )
 
 require (
+	github.com/go-think/openssl v1.20.0 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/spf13/pflag v1.0.10 // indirect
 	github.com/xoctopus/pkgx v0.4.0 // indirect
