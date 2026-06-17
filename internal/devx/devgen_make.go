@@ -181,6 +181,16 @@ show:
 	for _, d := range m.Depends {
 		text += fmt.Sprintf(`	@echo "	%s=$(shell which %s) $(%s)"`, d.Name, d.Name, d.DepKey()) + "\n"
 	}
+	n := 0
+	for _, v := range m.envs {
+		if len(v[0]) > n {
+			n = len(v[0])
+		}
+	}
+	text += `	@echo "envs:"` + "\n"
+	for _, v := range m.envs {
+		text += fmt.Sprintf(`	@echo "	%s: %s$(%s)"`, v[0], strings.Repeat(" ", n-len(v[0])), v[0]) + "\n"
+	}
 	_, _ = w.WriteString(text)
 }
 

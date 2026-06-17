@@ -50,6 +50,8 @@ show:
 	@echo "	git-chglog=$(shell which git-chglog) $(DEP_GIT_CHGLOG)"
 	@echo "	goimports-reviser=$(shell which goimports-reviser) $(DEP_GOIMPORTS_REVISER)"
 	@echo "	golangci-lint=$(shell which golangci-lint) $(DEP_GOLANGCI_LINT)"
+	@echo "envs:"
+	@echo "	GOWORK: $(GOWORK)"
 
 dep:
 	@echo "==> installing dependencies"
