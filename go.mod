@@ -4,10 +4,10 @@ go 1.26.4
 
 require (
 	github.com/spf13/cobra v1.10.2
-	github.com/xoctopus/confx v0.4.6-rc5
+	github.com/xoctopus/confx v0.4.6-rc8
 	github.com/xoctopus/genx v0.2.2-rc2
-	github.com/xoctopus/sqlx v0.3.1-rc2
-	github.com/xoctopus/x v0.4.8
+	github.com/xoctopus/sqlx v0.3.1-rc4
+	github.com/xoctopus/x v0.4.9
 )
 
 require (
@@ -17,7 +17,7 @@ require (
 	github.com/xoctopus/pkgx v0.4.0 // indirect
 	github.com/xoctopus/typx v0.4.3 // indirect
 	golang.org/x/exp v0.0.0-20251219203646-944ab1f22d93 // indirect
-	golang.org/x/mod v0.33.0 // indirect
-	golang.org/x/sync v0.19.0 // indirect
-	golang.org/x/tools v0.42.0 // indirect
+	golang.org/x/mod v0.37.0 // indirect
+	golang.org/x/sync v0.21.0 // indirect
+	golang.org/x/tools v0.46.0 // indirect
 )
