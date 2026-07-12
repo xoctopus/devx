@@ -6,7 +6,7 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/xoctopus/confx/pkg/cmdx"
-	"github.com/xoctopus/x/misc/defers"
+	"github.com/xoctopus/x/misc/cleanup"
 )
 
 var CmdShow = cmdx.NewCommand("show", &Show{}).Cmd()
@@ -15,13 +15,17 @@ var CmdShow = cmdx.NewCommand("show", &Show{}).Cmd()
 type Show struct{}
 
 func (c *Show) Exec(cmd *cobra.Command, args ...string) (err error) {
+	co := cleanup.NewCollector()
+	defer func() { err = co.JoinTo(&err) }()
+
 	if FileCheck(ConfigFilename, false) {
+
 		f, err := os.OpenFile(ConfigFilename, os.O_RDWR, 0644)
 		if err != nil {
 			cmd.Println(err)
 			os.Exit(1)
 		}
-		defer defers.Collect(f.Close, &err)
+		co.Collect(f.Close)
 
 		data, err := io.ReadAll(f)
 		if err != nil {

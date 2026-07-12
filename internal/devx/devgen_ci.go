@@ -8,12 +8,14 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/xoctopus/confx/pkg/cmdx"
-	"github.com/xoctopus/x/misc/defers"
+	"github.com/xoctopus/x/misc/cleanup"
 )
 
 var (
 	//go:embed static/ci.yml
 	gWorkflowCI []byte
+	//go:embed static/lint.yml
+	gWorkflowLint []byte
 	//go:embed static/dependabot.yml
 	gDependabot []byte
 
@@ -31,32 +33,45 @@ func (c *CI) Exec(cmd *cobra.Command, args ...string) (err error) {
 		return nil
 	}
 
-	if err := os.MkdirAll("./.github/workflows", 0o755); err != nil {
+	co := cleanup.NewCollector()
+	defer func() { err = co.JoinTo(&err) }()
+
+	if err = os.MkdirAll("./.github/workflows", 0o755); err != nil {
 		cmd.Println(err)
 		os.Exit(1)
 	}
 
-	f1, err := os.OpenFile("./.github/workflows/ci.yml", os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0o644)
+	f, err := os.OpenFile("./.github/workflows/ci.yml", os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0o644)
 	if err != nil {
 		cmd.Println(err)
 		os.Exit(1)
 	}
-	defer defers.Collect(f1.Close, &err)
-
-	if _, err = io.Copy(f1, bytes.NewReader(gWorkflowCI)); err != nil {
+	co.Collect(f.Close)
+	if _, err = io.Copy(f, bytes.NewReader(gWorkflowCI)); err != nil {
 		cmd.Println(err)
 		os.Exit(1)
 	}
 	cmd.Println("==> generated .github/workflows/ci.yml")
 
-	f2, err := os.OpenFile("./.github/dependabot.yml", os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0o644)
+	f, err = os.OpenFile("./.github/workflows/lint.yml", os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0o644)
 	if err != nil {
 		cmd.Println(err)
 		os.Exit(1)
 	}
-	defer defers.Collect(f2.Close, &err)
+	co.Collect(f.Close)
+	if _, err = io.Copy(f, bytes.NewReader(gWorkflowLint)); err != nil {
+		cmd.Println(err)
+		os.Exit(1)
+	}
+	cmd.Println("==> generated .github/workflows/lint.yml")
 
-	if _, err = io.Copy(f2, bytes.NewReader(gDependabot)); err != nil {
+	f, err = os.OpenFile("./.github/dependabot.yml", os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0o644)
+	if err != nil {
+		cmd.Println(err)
+		os.Exit(1)
+	}
+	co.Collect(f.Close)
+	if _, err = io.Copy(f, bytes.NewReader(gDependabot)); err != nil {
 		cmd.Println(err)
 		os.Exit(1)
 	}

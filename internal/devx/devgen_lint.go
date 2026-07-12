@@ -8,7 +8,7 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/xoctopus/confx/pkg/cmdx"
-	"github.com/xoctopus/x/misc/defers"
+	"github.com/xoctopus/x/misc/cleanup"
 )
 
 var (
@@ -29,12 +29,15 @@ func (l *Lint) Exec(cmd *cobra.Command, args ...string) (err error) {
 		return nil
 	}
 
+	co := cleanup.NewCollector()
+	defer func() { err = co.JoinTo(&err) }()
+
 	f, err := os.OpenFile(".golangci.yml", os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0o666)
 	if err != nil {
 		cmd.Println(err)
 		os.Exit(1)
 	}
-	defer defers.Collect(f.Close, &err)
+	co.Collect(f.Close)
 
 	if _, err = io.Copy(f, bytes.NewReader(gLintConfig)); err != nil {
 		cmd.Println(err)

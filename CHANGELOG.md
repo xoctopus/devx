@@ -2,35 +2,48 @@
 <a name="HEAD"></a>
 ## [HEAD](https://github.com/xoctopus/devx/compare/v0.0.7...HEAD)
 
-> 2026-06-03
+> 2026-06-29
 
 ### Chore
 
-* update version
-* add go vet
-* ignore QF1006
-* update version
-* ignore targets and images entry if empty
-* rename flag
-* update version
 * fmt code
+* upgrade deps
+* show env vars
+* upgrade deps
+* upgrade deps
+* upgrade deps
+* upgrade deps
+* target.mk
+* target.mk
+* ignore SA5008 staticcheck
+* upgrade deps
+* upgrade deps
+* upgrade deps
+* upgrade deps
 * update version
+* ignore QF1006
+* add go vet
+* update version
+* upgrade dependencies
+* ignore targets and images entry if empty
+* update version
+* rename flag
 * reordered go imports
 * update version
 * update version
-* upgrade deps
-* upgrade deps
+* upgrade dependencies
+* update version
 * update version
 * golangci ignore QF1012
 * update version
 * fix typo
+* **deps:** bump confx,sqlx,x to latest
 * **deps:** bump confx to v0.4.2
 * **deps:** bump dependencies
 * **deps:** bump actions/upload-artifact from 6 to 7
 * **deps:** bump github.com/xoctopus/confx from 0.4.2 to 0.4.5
-* **deps:** bump codecov/codecov-action from 5 to 6
 * **deps:** update ci.yml. use minium go1.26
-* **deps:** bump confx,sqlx,x to latest
+* **deps:** bump codecov/codecov-action from 5 to 6
 * **deps:** bump github.com/xoctopus/x from 0.2.11 to 0.3.0
 * **deps:** bump github.com/xoctopus/x from 0.4.4 to 0.4.5
 

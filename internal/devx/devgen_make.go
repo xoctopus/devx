@@ -13,7 +13,7 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/xoctopus/confx/pkg/cmdx"
-	"github.com/xoctopus/x/misc/defers"
+	"github.com/xoctopus/x/misc/cleanup"
 	"github.com/xoctopus/x/misc/must"
 	"github.com/xoctopus/x/slicex"
 	"github.com/xoctopus/x/stringsx"
@@ -61,13 +61,15 @@ type Makefile struct {
 func (m *Makefile) Exec(cmd *cobra.Command, args ...string) (err error) {
 	m.init(cmd)
 
-	var f *os.File
+	co := cleanup.NewCollector()
+	defer func() { err = co.JoinTo(&err) }()
 
+	var f *os.File
 	f, err = os.OpenFile("Makefile", os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0666)
 	if err != nil {
 		return err
 	}
-	defer defers.Collect(f.Close, &err)
+	co.Collect(f.Close)
 
 	m.vars(f)
 	m.show(f)

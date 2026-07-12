@@ -9,7 +9,7 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/xoctopus/confx/pkg/cmdx"
-	"github.com/xoctopus/x/misc/defers"
+	"github.com/xoctopus/x/misc/cleanup"
 )
 
 var CmdInit = cmdx.NewCommand("init", &Init{}).Cmd()
@@ -33,12 +33,16 @@ func (d *Init) Exec(cmd *cobra.Command, args ...string) (err error) {
 		cmd.Println(err)
 		os.Exit(1)
 	}
+
+	co := cleanup.NewCollector()
+	defer func() { err = co.JoinTo(nil) }()
+
 	f, err := os.OpenFile(ConfigFilename, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0644)
 	if err != nil {
 		cmd.Println(err)
 		os.Exit(1)
 	}
-	defer defers.Collect(f.Close, &err)
+	co.Collect(f.Close)
 
 	if _, err = io.Copy(f, bytes.NewReader(data)); err != nil {
 		cmd.Println(err)
