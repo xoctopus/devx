@@ -31,8 +31,8 @@ github.com/xoctopus/sqlx v0.3.1-rc5 h1:kg44EeQn1VzYWeTZKU5SJztdNDpVwyaLOUbj0dZk1
 github.com/xoctopus/sqlx v0.3.1-rc5/go.mod h1:Sa6Mb/W6KwZTZJ3awReHvkcjU7O4vQ4y0ocDcpF9FxY=
 github.com/xoctopus/typx v0.4.3 h1:cI0T0Q0krtgfb49PZvUubewa3RxfNZqY1tPs0LJqA88=
 github.com/xoctopus/typx v0.4.3/go.mod h1:SeBx8SL+J8MTHxWIV3tw5+y5PyLZFJhQOPLE31vz5dE=
-github.com/xoctopus/x v0.5.0 h1:PpVwj1RlxC6MhkHOJrfWYNEomCJcvOSQpUWznBY1Rqk=
-github.com/xoctopus/x v0.5.0/go.mod h1:kin3VJXnfa6Jk/2gqhjoTzZ7uA9dQtPc37ViYAr2oP8=
+github.com/xoctopus/x v0.5.2 h1:L/sI1dSljZXiawNDFWPXlyc/6ghvRzrpdarc/kpGKjI=
+github.com/xoctopus/x v0.5.2/go.mod h1:kin3VJXnfa6Jk/2gqhjoTzZ7uA9dQtPc37ViYAr2oP8=
 go.yaml.in/yaml/v3 v3.0.4/go.mod h1:DhzuOOF2ATzADvBadXxruRBLzYTpT36CKvDb3+aBEFg=
 golang.org/x/exp v0.0.0-20251219203646-944ab1f22d93 h1:fQsdNF2N+/YewlRZiricy4P1iimyPKZ/xwniHj8Q2a0=
 golang.org/x/exp v0.0.0-20251219203646-944ab1f22d93/go.mod h1:EPRbTFwzwjXj9NpYyyrvenVh9Y+GFeEvMNh7Xuz7xgU=
