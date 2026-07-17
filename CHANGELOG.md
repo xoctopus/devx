@@ -2,7 +2,7 @@
 <a name="HEAD"></a>
 ## [HEAD](https://github.com/xoctopus/devx/compare/v0.0.7...HEAD)
 
-> 2026-06-29
+> 2026-07-12
 
 ### Chore
 
@@ -58,6 +58,7 @@
 
 ### Feat
 
+* add lint.yml workflow
 * support env configs overwritten
 * support target make generation
 * bench with cover option
