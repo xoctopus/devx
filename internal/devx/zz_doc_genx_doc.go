@@ -83,7 +83,7 @@ func (v *Target) DocOf(names ...string) ([]string, bool) {
 		switch names[0] {
 		case "Name":
 			return []string{}, true
-		case "Entry":
+		case "GenMake":
 			return []string{}, true
 		}
 		return []string{}, false
@@ -110,6 +110,8 @@ func (v *Makefile) DocOf(names ...string) ([]string, bool) {
 			return []string{"Target assigns image entries with name and entry.", "eg: '{\"name\":\"poc\",\"entry\":\"cmd/poc\"}'"}, true
 		case "EnableBenchCover":
 			return []string{"if enable bench in cover"}, true
+		case "envs":
+			return []string{}, true
 		}
 		return []string{}, false
 	}

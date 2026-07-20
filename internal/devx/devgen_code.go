@@ -7,6 +7,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/xoctopus/confx/pkg/cmdx"
 	_ "github.com/xoctopus/genx/devpkg/codex"
+	_ "github.com/xoctopus/genx/devpkg/contextx"
 	_ "github.com/xoctopus/genx/devpkg/docx"
 	_ "github.com/xoctopus/genx/devpkg/enumx"
 	"github.com/xoctopus/genx/pkg/genx"

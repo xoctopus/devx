@@ -31,6 +31,16 @@ func ParseToolType(key string) (ToolType, error) {
 	}
 }
 
+// EnumValues implements enumx.CanBeEnum
+func (ToolType) EnumValues() []any {
+	return []any{
+		TOOL_TYPE__LINTER,
+		TOOL_TYPE__DOC,
+		TOOL_TYPE__FORMATER,
+		TOOL_TYPE__DEVGEN,
+	}
+}
+
 // Values returns enum value list of ToolType
 func (ToolType) Values() []ToolType {
 	return []ToolType{
