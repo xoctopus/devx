@@ -2,13 +2,14 @@
 <a name="HEAD"></a>
 ## [HEAD](https://github.com/xoctopus/devx/compare/v0.0.7...HEAD)
 
-> 2026-07-17
+> 2026-07-20
 
 ### Chore
 
-* golangci ignore QF1012
 * update version
-* fmt code
+* update version
+* ignore QF1006
+* upgrade dependencies
 * upgrade dependencies
 * show env vars
 * upgrade deps
@@ -22,32 +23,32 @@
 * upgrade deps
 * upgrade deps
 * upgrade deps
-* upgrade deps
-* ignore QF1006
 * add go vet
 * update version
 * ignore targets and images entry if empty
 * rename flag
-* upgrade dependencies
+* update version
+* upgrade deps
+* fmt code
 * update version
 * reordered go imports
-* update version
-* update version
 * update version
 * fix typo
 * update version
 * update version
-* **deps:** bump codecov/codecov-action from 5 to 6
+* golangci ignore QF1012
+* **deps:** bump lint actions
 * **deps:** bump confx,sqlx,x to latest
 * **deps:** bump confx to v0.4.2
 * **deps:** bump dependencies
-* **deps:** bump actions/upload-artifact from 6 to 7
-* **deps:** bump dependencies
 * **deps:** bump github.com/xoctopus/confx from 0.4.2 to 0.4.5
-* **deps:** update ci.yml. use minium go1.26
 * **deps:** bump codecov/codecov-action from 5 to 6
-* **deps:** bump github.com/xoctopus/x from 0.2.11 to 0.3.0
+* **deps:** bump codecov/codecov-action from 5 to 6
 * **deps:** bump github.com/xoctopus/x from 0.4.4 to 0.4.5
+* **deps:** update ci.yml. use minium go1.26
+* **deps:** bump actions/upload-artifact from 6 to 7
+* **deps:** bump github.com/xoctopus/x from 0.2.11 to 0.3.0
+* **deps:** bump dependencies
 
 ### Ci
 
@@ -57,9 +58,11 @@
 ### Doc
 
 * update CHANGELOG
+* update CHANGELOG
 
 ### Feat
 
+* gen contextx
 * add lint.yml workflow
 * support env configs overwritten
 * support target make generation
