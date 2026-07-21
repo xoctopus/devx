@@ -2,6 +2,7 @@ package main
 
 import (
 	_ "embed"
+	"runtime/debug"
 	"strings"
 
 	"github.com/spf13/cobra"
@@ -25,10 +26,18 @@ var CmdVersion = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		if Name != "" {
 			cmd.Printf("%s:%s@%s#%s_%s\n", Name, Branch, Version, CommitID, BuildTime)
-			return
+		} else {
+			if version != "" {
+				cmd.Println(strings.TrimSpace(version))
+			}
 		}
-		if version != "" {
-			cmd.Println(strings.TrimSpace(version))
+		if info, ok := debug.ReadBuildInfo(); ok {
+			for _, dep := range info.Deps {
+				if strings.HasPrefix(dep.Path, "github.com/xoctopus/") &&
+					dep.Path != info.Main.Path {
+					cmd.Printf("%s %s\n", dep.Path, dep.Version)
+				}
+			}
 		}
 	},
 	Short: "print the version of DevX/devgen",

@@ -62,6 +62,7 @@
 
 ### Feat
 
+* output dependencies version
 * gen contextx
 * add lint.yml workflow
 * support env configs overwritten
