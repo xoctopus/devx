@@ -2,13 +2,15 @@
 <a name="HEAD"></a>
 ## [HEAD](https://github.com/xoctopus/devx/compare/v0.0.7...HEAD)
 
-> 2026-07-21
+> 2026-07-22
 
 ### Chore
 
-* update version
-* update version
+* golangci ignore QF1012
+* upgrade deps
 * ignore QF1006
+* add go vet
+* update version
 * upgrade dependencies
 * upgrade dependencies
 * show env vars
@@ -17,38 +19,38 @@
 * upgrade deps
 * upgrade deps
 * target.mk
-* target.mk
-* ignore SA5008 staticcheck
-* upgrade deps
-* upgrade deps
-* upgrade deps
-* upgrade deps
-* add go vet
 * update version
+* ignore SA5008 staticcheck
 * ignore targets and images entry if empty
+* upgrade deps
+* upgrade deps
+* upgrade deps
+* upgrade deps
 * rename flag
 * update version
-* upgrade deps
-* fmt code
+* imports all generators
 * update version
+* target.mk
+* fmt code
+* fix typo
 * reordered go imports
 * update version
-* fix typo
 * update version
 * update version
-* golangci ignore QF1012
-* **deps:** bump lint actions
+* regen
+* update version
 * **deps:** bump confx,sqlx,x to latest
 * **deps:** bump confx to v0.4.2
 * **deps:** bump dependencies
 * **deps:** bump github.com/xoctopus/confx from 0.4.2 to 0.4.5
 * **deps:** bump codecov/codecov-action from 5 to 6
-* **deps:** bump codecov/codecov-action from 5 to 6
 * **deps:** bump github.com/xoctopus/x from 0.4.4 to 0.4.5
-* **deps:** update ci.yml. use minium go1.26
 * **deps:** bump actions/upload-artifact from 6 to 7
-* **deps:** bump github.com/xoctopus/x from 0.2.11 to 0.3.0
 * **deps:** bump dependencies
+* **deps:** update ci.yml. use minium go1.26
+* **deps:** bump codecov/codecov-action from 5 to 6
+* **deps:** bump github.com/xoctopus/x from 0.2.11 to 0.3.0
+* **deps:** bump lint actions
 
 ### Ci
 
