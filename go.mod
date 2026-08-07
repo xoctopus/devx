@@ -6,8 +6,8 @@ tool github.com/xoctopus/devx/internal/cmd/skill-install
 
 require (
 	// +skill:genx
-	github.com/xoctopus/genx v0.3.3
-	github.com/xoctopus/sqlx v0.3.6
+	github.com/xoctopus/genx v0.3.4
+	github.com/xoctopus/sqlx v0.3.7
 	// +skill:testx
 	github.com/xoctopus/x v0.5.5
 )
