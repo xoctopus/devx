@@ -6,15 +6,15 @@ tool github.com/xoctopus/devx/internal/cmd/skill-install
 
 require (
 	// +skill:genx
-	github.com/xoctopus/genx v0.3.3
-	github.com/xoctopus/sqlx v0.3.6
+	github.com/xoctopus/genx v0.3.4
+	github.com/xoctopus/sqlx v0.3.8
 	// +skill:testx
 	github.com/xoctopus/x v0.5.5
 )
 
 require (
 	github.com/spf13/cobra v1.10.2
-	github.com/xoctopus/confx v0.4.8
+	github.com/xoctopus/confx v0.4.9
 )
 
 require (
