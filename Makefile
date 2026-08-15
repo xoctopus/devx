@@ -114,13 +114,13 @@ ci-cover: lint cover
 target_demo:
 	@make -C cmd/demo --no-print-directory install
 
+image_demo:
+	@make -C cmd/demo --no-print-directory image
+
 target_devgen:
 	@make -C cmd/devgen --no-print-directory install
 
 targets: target_demo target_devgen
-
-image_demo:
-	@make -C cmd/demo --no-print-directory image
 
 images: image_demo
 

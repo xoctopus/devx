@@ -32,3 +32,12 @@ install: build
 		cp -r config ${DIST}; \
 	fi
 	@echo DONE
+{{if .Image}}
+IMAGE_NAME ?= $(NAME)
+IMAGE_TAG  ?= $(if $(GIT_TAG),$(GIT_TAG),latest)-$(GIT_COMMIT)
+
+image:
+	@echo "==> building image $(IMAGE_NAME):$(IMAGE_TAG)"
+	@docker build -f Dockerfile -t $(IMAGE_NAME):$(IMAGE_TAG) ../..
+	@echo "DONE $(IMAGE_NAME):$(IMAGE_TAG)"
+{{end}}

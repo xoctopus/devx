@@ -1,11 +1,43 @@
-install:
-	@echo "exported env has been inherited write your target installing"
-	@echo "GIT_COMMIT = "$(GIT_COMMIT)
-	@echo "GIT_TAG    = "$(GIT_TAG)
-	@echo "GIT_BRANCH = "$(GIT_BRANCH)
-	@echo "BUILD_AT   = "$(BUILD_AT)
+NAME         := $(shell basename $(CURDIR))
+DIST         := $(abspath ../../dist/${NAME})
+DIST_NAME    := dist/${NAME}
+VERSION_PATH := main
+
+LDFLAGS="-s -w -X ${VERSION_PATH}.Name=${NAME} \
+	-X ${VERSION_PATH}.Branch=${GIT_BRANCH}    \
+	-X ${VERSION_PATH}.Version=${GIT_TAG}      \
+	-X ${VERSION_PATH}.CommitID=${GIT_COMMIT}  \
+	-X ${VERSION_PATH}.BuildTime=${BUILD_AT} "
+
+GOOS   := $(shell go env GOOS)
+GOARCH := $(shell go env GOARCH)
+
+OUT := ${NAME}-${GOOS}-${GOARCH}
+ifeq ($(GOOS),"windows")
+OUT := ${OUT}.exe
+endif
+
+build:
+	@echo "==> building $(NAME)..."
+	@go build -ldflags ${LDFLAGS} -o ${NAME}
+	@echo "$(NAME):$(GIT_BRANCH)@$(GIT_TAG)#$(GIT_COMMIT)_$(BUILD_AT)" > version
+	@echo "$(MODULE_PATH)" >> version
+	@cp ${NAME} ${OUT}
+	@echo DONE
+
+install: build
+	@echo "==> installing to ${DIST_NAME}"
+	@rm -rf ${DIST} && mkdir -p ${DIST} && mv ${NAME} ${OUT} ${DIST}
+	@if [ -d "config" ]; then \
+		cp -r config ${DIST}; \
+	fi
+	@echo DONE
+
+IMAGE_NAME ?= $(NAME)
+IMAGE_TAG  ?= $(if $(GIT_TAG),$(GIT_TAG),latest)-$(GIT_COMMIT)
 
 image:
-	@echo "exported env has been inherited write your target image building"
-	@echo "GOWORK    = "$(GOWORK)
-	@echo "HACK_TEST = "$(HACK_TEST)
+	@echo "==> building image $(IMAGE_NAME):$(IMAGE_TAG)"
+	@docker build -f Dockerfile -t $(IMAGE_NAME):$(IMAGE_TAG) ../..
+	@echo "DONE $(IMAGE_NAME):$(IMAGE_TAG)"
+

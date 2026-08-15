@@ -32,3 +32,4 @@ install: build
 		cp -r config ${DIST}; \
 	fi
 	@echo DONE
+

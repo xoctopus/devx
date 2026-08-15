@@ -10,6 +10,7 @@ import (
 	"path/filepath"
 	"slices"
 	"strings"
+	"text/template"
 
 	"github.com/spf13/cobra"
 	"github.com/xoctopus/confx/pkg/cmdx"
@@ -21,15 +22,23 @@ import (
 
 var (
 	CmdMakefile = cmdx.NewCommand("make", &Makefile{}).Cmd()
-	//go:embed static/target.mk
+	//go:embed static/target.mk.tpl
 	gTargetMakefile []byte
-	//go:embed static/target.dockerfile
-	gTargetDockerfile []byte
+	//go:embed static/target.img.tpl
+	gTargetImage []byte
 )
 
 type Target struct {
-	Name    string `json:"name"`
-	GenMake bool   `json:"gen_make"`
+	Name  string       `json:"name"`
+	Image *ImageOption `json:"image"`
+}
+
+type ImageOption struct {
+	Runtime    string `json:"runtime,omitempty"`
+	TimeZone   string `json:"timezone,omitempty"`
+	CgoEnabled bool   `json:"cgo_enabled,omitempty"`
+	GoProxy    string `json:"go_proxy,omitempty"`
+	Expose     string `json:"expose,omitempty"`
 }
 
 // Makefile generates go project Makefile
@@ -49,9 +58,6 @@ type Makefile struct {
 	// Target assigns target entries with name and entry.
 	// eg: '{"name":"poc","entry":"cmd/poc"}'
 	Target []Target `json:"target" cmd:"target"`
-	// Target assigns image entries with name and entry.
-	// eg: '{"name":"poc","entry":"cmd/poc"}'
-	Image []Target `json:"image" cmd:"image"`
 	// EnableBenchCover if enable bench in cover
 	EnableBenchCover bool `json:"enable_bench_cover" cmd:",default=false"`
 
@@ -78,7 +84,6 @@ func (m *Makefile) Exec(cmd *cobra.Command, args ...string) (err error) {
 	m.test(f)
 	if len(m.Target) > 0 {
 		m.target(cmd, f)
-		m.image(f)
 	}
 	m.check(f)
 
@@ -165,7 +170,9 @@ export MODULE_PATH
 }
 
 func (m *Makefile) show(w *os.File) {
-	text := `
+	var text strings.Builder
+
+	text.WriteString(`
 show:
 	@echo "module:"
 	@echo "	path=$(MODULE_PATH)"
@@ -179,9 +186,9 @@ show:
 	@echo "tools:"
 	@echo "	build=$(GOBUILD)"
 	@echo "	test=$(GOTEST)"
-`
+`)
 	for _, d := range m.Depends {
-		text += fmt.Sprintf(`	@echo "	%s=$(shell which %s) $(%s)"`, d.Name, d.Name, d.DepKey()) + "\n"
+		text.WriteString(fmt.Sprintf(`	@echo "	%s=$(shell which %s) $(%s)"`, d.Name, d.Name, d.DepKey()) + "\n")
 	}
 	n := 0
 	for _, v := range m.envs {
@@ -189,11 +196,11 @@ show:
 			n = len(v[0])
 		}
 	}
-	text += `	@echo "envs:"` + "\n"
+	text.WriteString(`	@echo "envs:"` + "\n")
 	for _, v := range m.envs {
-		text += fmt.Sprintf(`	@echo "	%s: %s$(%s)"`, v[0], strings.Repeat(" ", n-len(v[0])), v[0]) + "\n"
+		text.WriteString(fmt.Sprintf(`	@echo "	%s: %s$(%s)"`, v[0], strings.Repeat(" ", n-len(v[0])), v[0]) + "\n")
 	}
-	_, _ = w.WriteString(text)
+	_, _ = w.WriteString(text.String())
 }
 
 func (m *Makefile) dep(w *os.File) {
@@ -280,52 +287,99 @@ hack_dep_stop:
 
 func (m *Makefile) target(cmd *cobra.Command, w *os.File) {
 	names := make([]string, 0, len(m.Target))
+	images := make([]string, 0, len(m.Target))
 	for _, t := range m.Target {
-		m.cmdMake(cmd, t)
 		entry := filepath.Join("cmd", t.Name)
 		fi, err := os.Stat(entry)
 		if err != nil && os.IsNotExist(err) || !fi.IsDir() {
 			fmt.Printf("WARN: target entry `%s` is not exists or not a folder\n", entry)
 			continue
 		}
+		// generate cmd Makefile
+		m.cmdMake(cmd, t)
 
 		_, _ = fmt.Fprintf(w, `
 target_%s:
 	@make -C %s --no-print-directory install
 `, t.Name, entry)
 		names = append(names, "target_"+t.Name)
+
+		if t.Image != nil {
+			_, _ = fmt.Fprintf(w, `
+image_%s:
+	@make -C %s --no-print-directory image
+`, t.Name, entry)
+			images = append(images, "image_"+t.Name)
+		}
 	}
 
 	_, _ = fmt.Fprintf(w, `
 targets: %s
 `, strings.Join(names, " "))
-}
 
-func (m *Makefile) image(w *os.File) {
-	names := make([]string, 0, len(m.Target))
-	for _, t := range m.Image {
-		entry := filepath.Join("cmd", t.Name)
+	if len(images) > 0 {
 		_, _ = fmt.Fprintf(w, `
-image_%s:
-	@make -C %s --no-print-directory image
-`, t.Name, entry)
-		names = append(names, "image_"+t.Name)
-	}
-
-	_, _ = fmt.Fprintf(w, `
 images: %s
-`, strings.Join(names, " "))
+`, strings.Join(images, " "))
+	}
 }
 
 func (m *Makefile) cmdMake(cmd *cobra.Command, t Target) {
-	if !t.GenMake {
-		return
-	}
 	filename := filepath.Join("cmd", t.Name, "Makefile")
 	f := must.NoErrorV(os.OpenFile(filename, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0666))
 	defer func() { _ = f.Close() }()
-	must.NoErrorV(io.Copy(f, bytes.NewReader(gTargetMakefile)))
+
+	tpl := must.NoErrorV(template.New("makefile").Parse(string(gTargetMakefile)))
+	must.NoError(tpl.Execute(f, map[string]any{"Image": t.Image != nil}))
+
+	if t.Image != nil {
+		m.cmdImage(cmd, t.Name, t.Image)
+	}
 	cmd.Printf("==> generated %s\n", filename)
+}
+
+func (m *Makefile) cmdImage(cmd *cobra.Command, name string, i *ImageOption) {
+	goVersion := must.NoErrorV(goModVersion())
+	runtime := cmp.Or(i.Runtime, "alpine:latest")
+	cgoEnabled := "0"
+	if i.CgoEnabled {
+		cgoEnabled = "1"
+	}
+
+	tpl := must.NoErrorV(template.New("dockerfile").Parse(string(gTargetImage)))
+	var buf bytes.Buffer
+	must.NoError(tpl.Execute(&buf, map[string]any{
+		"Name":       name,
+		"GoVersion":  goVersion,
+		"Runtime":    runtime,
+		"CgoEnabled": cgoEnabled,
+		"GoProxy":    i.GoProxy,
+		"TimeZone":   i.TimeZone,
+		"Expose":     i.Expose,
+		"Config":     FileCheck(filepath.Join("cmd", name, "config"), true),
+	}))
+
+	filename := filepath.Join("cmd", name, "Dockerfile")
+	f := must.NoErrorV(os.OpenFile(filename, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0666))
+	defer func() { _ = f.Close() }()
+	must.NoErrorV(io.Copy(f, &buf))
+	cmd.Printf("==> generated %s\n", filename)
+}
+
+func goModVersion() (string, error) {
+	data, err := os.ReadFile("go.mod")
+	if err != nil {
+		return "", err
+	}
+	for _, line := range strings.Split(string(data), "\n") {
+		line = strings.TrimSpace(line)
+		if after, ok := strings.CutPrefix(line, "go "); ok {
+			if ver := strings.TrimSpace(after); ver != "" {
+				return ver, nil
+			}
+		}
+	}
+	return "", fmt.Errorf("go version not found in go.mod")
 }
 
 func (m *Makefile) check(w *os.File) {

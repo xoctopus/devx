@@ -2,19 +2,22 @@ module github.com/xoctopus/devx
 
 go 1.26.5
 
-tool github.com/xoctopus/devx/internal/cmd/skill-install
+tool (
+	github.com/xoctopus/devx/internal/cmd/gen
+	github.com/xoctopus/devx/internal/cmd/skill-install
+)
 
 require (
 	// +skill:genx
-	github.com/xoctopus/genx v0.3.3
-	github.com/xoctopus/sqlx v0.3.6
+	github.com/xoctopus/genx v0.3.5
+	github.com/xoctopus/sqlx v0.3.9
 	// +skill:testx
 	github.com/xoctopus/x v0.5.5
 )
 
 require (
 	github.com/spf13/cobra v1.10.2
-	github.com/xoctopus/confx v0.4.8
+	github.com/xoctopus/confx v0.5.3
 )
 
 require (

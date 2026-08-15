@@ -57,18 +57,13 @@
 		"target": [
 			{
 				"name": "demo",
-				"entry": "cmd/demo"
+				"image": {
+					"timezone": "Asia/Shanghai",
+					"expose": "80"
+				}
 			},
 			{
-				"name": "devgen",
-				"entry": "cmd/devgen",
-				"gen_make": true
-			}
-		],
-		"image": [
-			{
-				"name": "demo",
-				"entry": "cmd/demo"
+				"name": "devgen"
 			}
 		]
 	},
