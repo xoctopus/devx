@@ -43,12 +43,19 @@ var (
 		"main.go",
 		"testing.go",
 		"example/",
+		"testutil/",
+		"testdata/",
+		"hack/",
+		"vendor/",
 	}
 	DefaultFormatIgnores = []string{
 		".git/",
 		".xgo/",
 		"*.pb.go",
 		"*_genx_*",
+		"*_gen.go",
+		"*_mock.go",
+		"vendor/",
 	}
 	DefaultGoTools = [][2]string{
 		{"GOTEST", "go"},

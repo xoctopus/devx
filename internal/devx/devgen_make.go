@@ -28,26 +28,33 @@ var (
 	gTargetImage []byte
 )
 
+// Target cmd/<name> build target
 type Target struct {
-	Name  string       `json:"name"`
+	// Name target binary name, entry is cmd/<name>
+	Name string `json:"name"`
+	// Image optional docker image options
 	Image *ImageOption `json:"image"`
 }
 
+// ImageOption docker image build options
 type ImageOption struct {
-	Runtime    string `json:"runtime,omitempty"`
-	TimeZone   string `json:"timezone,omitempty"`
-	CgoEnabled bool   `json:"cgo_enabled,omitempty"`
-	GoProxy    string `json:"go_proxy,omitempty"`
-	Expose     string `json:"expose,omitempty"`
+	// Runtime base image, default alpine:latest
+	Runtime string `json:"runtime,omitempty"`
+	// TimeZone container timezone
+	TimeZone string `json:"timezone,omitempty"`
+	// CgoEnabled enable CGO for image build
+	CgoEnabled bool `json:"cgo_enabled,omitempty"`
+	// GoProxy GOPROXY for image build
+	GoProxy string `json:"go_proxy,omitempty"`
+	// Expose container expose port
+	Expose string `json:"expose,omitempty"`
 }
 
 // Makefile generates go project Makefile
 type Makefile struct {
 	// TestIgnore patterns unit testing and coverage ignores
-	// .pb.go _mock.go _genx_ testing.go example/ will be ignored default
 	TestIgnore []string `json:"test_ignore" cmd:""`
 	// FormatIgnore patterns code formating ignores
-	// .git/ .xgo/ *.pb.go *_genx_* will be ignored default
 	FormatIgnore []string `json:"format_ignore" cmd:""`
 	// Env global env variables
 	Env []string `json:"env" cmd:""`
@@ -55,8 +62,7 @@ type Makefile struct {
 	HackTest bool `json:"hack_test" cmd:",default=false"`
 	// Depends dependent tools info
 	Depends Depends `json:"depends" cmd:"depends"`
-	// Target assigns target entries with name and entry.
-	// eg: '{"name":"poc","entry":"cmd/poc"}'
+	// Target assigns build targets under cmd/<name>; optional image generates Dockerfile
 	Target []Target `json:"target" cmd:"target"`
 	// EnableBenchCover if enable bench in cover
 	EnableBenchCover bool `json:"enable_bench_cover" cmd:",default=false"`
@@ -236,7 +242,11 @@ func (m *Makefile) tidy(w *os.File) {
 	text := `
 tidy:
 	@echo "==> go mod tidy"
-	@go mod tidy`
+	@go mod tidy
+	@if [ -d vendor ]; then \
+		echo "==> go mod vendor"; \
+		go mod vendor; \
+	fi`
 	_, _ = w.WriteString(text + "\n")
 }
 
