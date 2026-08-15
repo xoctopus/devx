@@ -12,10 +12,10 @@ COPY ./ ./
 
 RUN make target_demo
 
+# bundle
 FROM alpine:latest AS bundle
 WORKDIR /app
 COPY --from=builder /go/src/dist/demo/demo /app/app
-
 
 # runtime
 FROM alpine:latest

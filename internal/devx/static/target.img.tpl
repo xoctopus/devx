@@ -13,12 +13,12 @@ COPY ./ ./
 
 RUN make target_{{.Name}}
 
+# bundle
 FROM {{.Runtime}} AS bundle
 WORKDIR /app
 COPY --from=builder /go/src/dist/{{.Name}}/{{.Name}} /app/app
 {{if .Config}}COPY --from=builder /go/src/dist/{{.Name}}/config   /app/config
 {{end}}
-
 # runtime
 FROM {{.Runtime}}
 RUN apk add --no-cache ca-certificates{{if .TimeZone}}
