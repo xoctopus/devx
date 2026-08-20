@@ -15,7 +15,6 @@ func init() {
 	root.AddCommand(CmdCI)
 	root.AddCommand(CmdInit)
 	root.AddCommand(CmdShow)
-	root.AddCommand(CmdCode)
 }
 
 func Command() *cobra.Command {

@@ -5,7 +5,6 @@ import (
 
 	_ "github.com/xoctopus/genx/devpkg"
 	"github.com/xoctopus/genx/pkg/genx"
-	_ "github.com/xoctopus/sqlx/devpkg"
 )
 
 func main() {
