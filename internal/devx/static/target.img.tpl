@@ -16,9 +16,17 @@ RUN make target_{{.Name}}
 # bundle
 FROM {{.Runtime}} AS bundle
 WORKDIR /app
-COPY --from=builder /go/src/dist/{{.Name}}/{{.Name}} /app/app
-{{if .Config}}COPY --from=builder /go/src/dist/{{.Name}}/config   /app/config
-{{end}}
+RUN --mount=type=bind,from=builder,source=/go/src/dist/{{.Name}},target=/mnt/dist <<'EOF'
+set -eux
+cp "/mnt/dist/{{.Name}}" /app/app
+if [ -f /mnt/dist/version ]; then
+	cp /mnt/dist/version /app/version
+fi
+if [ -d /mnt/dist/config ]; then
+	cp -a /mnt/dist/config /app/config
+fi
+EOF
+
 # runtime
 FROM {{.Runtime}}
 RUN apk add --no-cache ca-certificates{{if .TimeZone}}
@@ -29,7 +37,9 @@ RUN ln -sf /usr/share/zoneinfo/{{.TimeZone}} /etc/localtime
 RUN echo "{{.TimeZone}}" > /etc/timezone
 {{end}}
 # permission
+# -H: no /home/app; point HOME at /app so runtime (and any go tool cache) can write.
 RUN adduser -D -H -u 65532 -s /sbin/nologin app
+ENV HOME=/app
 
 WORKDIR /app
 RUN --mount=type=bind,from=bundle,source=/app,target=/mnt/app <<'EOF'

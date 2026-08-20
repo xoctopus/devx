@@ -28,6 +28,9 @@ build:
 install: build
 	@echo "==> installing to ${DIST_NAME}"
 	@rm -rf ${DIST} && mkdir -p ${DIST} && mv ${NAME} ${OUT} ${DIST}
+	@if [ -f "version" ]; then \
+		cp version ${DIST}; \
+	fi
 	@if [ -d "config" ]; then \
 		cp -r config ${DIST}; \
 	fi

@@ -15,7 +15,16 @@ RUN make target_demo
 # bundle
 FROM alpine:latest AS bundle
 WORKDIR /app
-COPY --from=builder /go/src/dist/demo/demo /app/app
+RUN --mount=type=bind,from=builder,source=/go/src/dist/demo,target=/mnt/dist <<'EOF'
+set -eux
+cp "/mnt/dist/demo" /app/app
+if [ -f /mnt/dist/version ]; then
+	cp /mnt/dist/version /app/version
+fi
+if [ -d /mnt/dist/config ]; then
+	cp -a /mnt/dist/config /app/config
+fi
+EOF
 
 # runtime
 FROM alpine:latest
@@ -27,7 +36,9 @@ RUN ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 RUN echo "Asia/Shanghai" > /etc/timezone
 
 # permission
+# -H: no /home/app; point HOME at /app so runtime (and any go tool cache) can write.
 RUN adduser -D -H -u 65532 -s /sbin/nologin app
+ENV HOME=/app
 
 WORKDIR /app
 RUN --mount=type=bind,from=bundle,source=/app,target=/mnt/app <<'EOF'

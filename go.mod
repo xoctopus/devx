@@ -9,7 +9,7 @@ tool (
 
 require (
 	// +skill:genx
-	github.com/xoctopus/genx v0.3.6
+	github.com/xoctopus/genx v0.3.7
 	// +skill:testx
 	github.com/xoctopus/x v0.5.5
 )
@@ -24,7 +24,7 @@ require (
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/spf13/pflag v1.0.10 // indirect
 	github.com/xoctopus/pkgx v0.4.3 // indirect
-	github.com/xoctopus/typx v0.4.5 // indirect
+	github.com/xoctopus/typx v0.4.6 // indirect
 	golang.org/x/exp v0.0.0-20260611194520-c48552f49976 // indirect
 	golang.org/x/mod v0.38.0 // indirect
 	golang.org/x/sync v0.22.0 // indirect

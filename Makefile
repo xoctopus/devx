@@ -2,8 +2,8 @@
 # go package info
 MODULE_PATH    := $(shell cat go.mod | grep ^module -m 1 | awk '{ print $$2; }' || '')
 MODULE_NAME    := $(shell basename $(MODULE_PATH))
-TEST_IGNORES   := "_gen.go|.pb.go|_mock.go|_genx_|main.go|testing.go|example/"
-FORMAT_IGNORES := ".git/,.xgo/,*.pb.go,*_genx_*"
+TEST_IGNORES   := "_gen.go|.pb.go|_mock.go|_genx_|main.go|testing.go|example/|testutil/|testdata/|hack/|vendor/"
+FORMAT_IGNORES := ".git/,.xgo/,*.pb.go,*_genx_*,*_gen.go,*_mock.go,vendor/"
 
 # git repository info
 IS_GIT_REPO := $(shell git rev-parse --is-inside-work-tree >/dev/null 2>&1 && echo 1 || echo 0)
@@ -94,6 +94,10 @@ upgrade-dep:
 tidy:
 	@echo "==> go mod tidy"
 	@go mod tidy
+	@if [ -d vendor ]; then \
+		echo "==> go mod vendor"; \
+		go mod vendor; \
+	fi
 
 test: dep tidy
 	@echo "==> run unit test"

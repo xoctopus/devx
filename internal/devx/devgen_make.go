@@ -366,7 +366,6 @@ func (m *Makefile) cmdImage(cmd *cobra.Command, name string, i *ImageOption) {
 		"GoProxy":    i.GoProxy,
 		"TimeZone":   i.TimeZone,
 		"Expose":     i.Expose,
-		"Config":     FileCheck(filepath.Join("cmd", name, "config"), true),
 	}))
 
 	filename := filepath.Join("cmd", name, "Dockerfile")
