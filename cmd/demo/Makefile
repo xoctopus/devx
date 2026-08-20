@@ -17,6 +17,11 @@ ifeq ($(GOOS),"windows")
 OUT := ${OUT}.exe
 endif
 
+# use vendor when the module is vendored (cmd/<name> -> module root)
+ifneq ($(wildcard ../../vendor/modules.txt),)
+export GOFLAGS := $(GOFLAGS) -mod=vendor
+endif
+
 build:
 	@echo "==> building $(NAME)..."
 	@go build -ldflags ${LDFLAGS} -o ${NAME}

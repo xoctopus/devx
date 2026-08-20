@@ -23,6 +23,11 @@ export MODULE_PATH
 GOWORK ?= off
 export GOWORK
 
+# use vendor when the module is vendored
+ifneq ($(wildcard vendor/modules.txt),)
+export GOFLAGS := $(GOFLAGS) -mod=vendor
+endif
+
 # go build tools
 GOTEST  := go
 GOBUILD := go
@@ -52,6 +57,7 @@ show:
 	@echo "	golangci-lint=$(shell which golangci-lint) $(DEP_GOLANGCI_LINT)"
 	@echo "envs:"
 	@echo "	GOWORK: $(GOWORK)"
+	@echo "	GOFLAGS: $(GOFLAGS)"
 
 dep:
 	@echo "==> installing dependencies"

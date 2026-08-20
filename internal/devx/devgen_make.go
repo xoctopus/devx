@@ -161,6 +161,13 @@ export MODULE_PATH
 		_, _ = w.WriteString(fmt.Sprintf("export %s\n", v[0]))
 	}
 
+	_, _ = w.WriteString(`
+# use vendor when the module is vendored
+ifneq ($(wildcard vendor/modules.txt),)
+export GOFLAGS := $(GOFLAGS) -mod=vendor
+endif
+`)
+
 	_, _ = w.WriteString("\n# go build tools\n")
 	_ = WriteKeyValAlign(w, "", ":=", DefaultGoTools)
 
@@ -206,6 +213,7 @@ show:
 	for _, v := range m.envs {
 		text.WriteString(fmt.Sprintf(`	@echo "	%s: %s$(%s)"`, v[0], strings.Repeat(" ", n-len(v[0])), v[0]) + "\n")
 	}
+	text.WriteString(`	@echo "	GOFLAGS: $(GOFLAGS)"` + "\n")
 	_, _ = w.WriteString(text.String())
 }
 
