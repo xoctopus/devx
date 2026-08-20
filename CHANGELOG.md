@@ -1,20 +1,44 @@
 
 <a name="HEAD"></a>
-## [HEAD](https://github.com/xoctopus/devx/compare/v0.0.7...HEAD)
+## [HEAD](https://github.com/xoctopus/devx/compare/v0.6.1...HEAD)
 
-> 2026-07-31
+> 2026-08-21
+
+### Ci
+
+* **make:** use -mod=vendor when vendor/modules.txt exists
+
+
+<a name="v0.6.1"></a>
+## [v0.6.1](https://github.com/xoctopus/devx/compare/v0.6.0...v0.6.1)
+
+> 2026-08-20
+
+
+<a name="v0.6.0"></a>
+## [v0.6.0](https://github.com/xoctopus/devx/compare/v0.5.6...v0.6.0)
+
+> 2026-08-20
+
+
+<a name="v0.5.6"></a>
+## [v0.5.6](https://github.com/xoctopus/devx/compare/v0.0.7...v0.5.6)
+
+> 2026-08-20
 
 ### Chore
 
-* update version
-* update version
+* upgrade deps
+* rename flag
 * ignore QF1006
 * add go vet
-* regen
-* imports all generators
 * update version
 * ignore targets and images entry if empty
-* rename flag
+* regen
+* imports all generators
+* upgrade deps
+* update version
+* update version
 * upgrade dependencies
 * upgrade dependencies
 * show env vars
@@ -28,33 +52,33 @@
 * upgrade deps
 * upgrade deps
 * upgrade deps
-* upgrade deps
-* upgrade deps
-* update version
+* format code
+* update ci.yml template
 * fix typo
 * update version
 * golangci ignore QF1012
+* update version
 * update version
 * fmt code
 * update version
 * reordered go imports
 * update version
 * **deps:** bump codecov/codecov-action from 5 to 6
-* **deps:** bump actions/setup-go from 6 to 7 ([#69](https://github.com/xoctopus/devx/issues/69))
-* **deps:** bump confx,sqlx,x to latest
-* **deps:** bump github.com/xoctopus/confx from 0.4.6 to 0.4.8 ([#72](https://github.com/xoctopus/devx/issues/72))
-* **deps:** bump actions/upload-artifact from 6 to 7
-* **deps:** bump github.com/xoctopus/x from 0.4.4 to 0.4.5
 * **deps:** bump dependencies
+* **deps:** bump confx,sqlx,x to latest
+* **deps:** bump actions/upload-artifact from 6 to 7
 * **deps:** bump github.com/xoctopus/confx from 0.4.2 to 0.4.5
+* **deps:** bump codecov/codecov-action from 5 to 6
 * **deps:** bump dependencies
 * **deps:** bump confx to v0.4.2
-* **deps:** bump codecov/codecov-action from 5 to 6
 * **deps:** bump lint actions
-* **deps:** update ci.yml. use minium go1.26
+* **deps:** bump github.com/xoctopus/x from 0.4.4 to 0.4.5
 * **deps:** bump codecov/codecov-action from 5 to 7 ([#49](https://github.com/xoctopus/devx/issues/49))
-* **deps:** bump github.com/xoctopus/x from 0.2.11 to 0.3.0
 * **deps:** bump actions/checkout from 6 to 7 ([#57](https://github.com/xoctopus/devx/issues/57))
+* **deps:** update ci.yml. use minium go1.26
+* **deps:** bump actions/setup-go from 6 to 7 ([#69](https://github.com/xoctopus/devx/issues/69))
+* **deps:** bump github.com/xoctopus/x from 0.2.11 to 0.3.0
+* **deps:** bump github.com/xoctopus/confx from 0.4.6 to 0.4.8 ([#72](https://github.com/xoctopus/devx/issues/72))
 
 ### Ci
 
@@ -77,10 +101,17 @@
 * support target make generation
 * bench with cover option
 * benchmarking with cover
+* **make:** package version and config into target images
+* **make:** expand default ignores and refresh vendor on tidy
+* **make:** support Target.Image Dockerfile and image targets
 
 ### Fix
 
 * make targets with probe config folder
+
+### Refactor
+
+* drop code generating
 
 
 <a name="v0.0.7"></a>
