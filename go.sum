@@ -3,6 +3,8 @@ github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/go-think/openssl v1.21.0 h1:vgdeN8a8Gjytp7dhfZAn2ARfHni5HguoN5BxGJ3v8sw=
 github.com/go-think/openssl v1.21.0/go.mod h1:Ug+hrHD5ldaCqpHVuSaP1z/HogGbEtXEbUJmiHai+II=
+github.com/go-think/openssl v1.22.0 h1:YGgBsejMumbU3fZ+ENJhzfHgMtk1qvIaYHzQSBcNgEU=
+github.com/go-think/openssl v1.22.0/go.mod h1:Ug+hrHD5ldaCqpHVuSaP1z/HogGbEtXEbUJmiHai+II=
 github.com/google/go-cmp v0.7.0 h1:wk8382ETsv4JYUZwIsn6YpYiWiBsYLSJiTsyBybVuN8=
 github.com/google/go-cmp v0.7.0/go.mod h1:pXiqmnSA92OHEEa9HXL2W4E7lf9JzCmGVUdgjX3N/iU=
 github.com/inconshreveable/mousetrap v1.1.0 h1:wN+x4NVGpMsO7ErUn/mUI3vEoE6Jt13X2s0bqwp9tc8=
@@ -19,6 +21,8 @@ github.com/stretchr/testify v1.11.0 h1:ib4sjIrwZKxE5u/Japgo/7SJV3PvgjGiRNAvTVGqQ
 github.com/stretchr/testify v1.11.0/go.mod h1:wZwfW3scLgRK+23gO65QZefKpKQRnfz6sD981Nm4B6U=
 github.com/xoctopus/confx v0.5.3 h1:U4CLjsrPe9AyZ3wxcsvfivKUKaatbDnrLj5BOIgAmoI=
 github.com/xoctopus/confx v0.5.3/go.mod h1:SB6xioNx+vMTDfFywS+pzSB2jbOWy0FmVaMQ6hENLv4=
+github.com/xoctopus/confx v0.5.6 h1:HWC2HKusoAotniG/gLWy4jusFxBStMRSBaUwX9dDIts=
+github.com/xoctopus/confx v0.5.6/go.mod h1:A5I81DbcSNBlQAR4wR9NlVJE5Zil3Fm4DMz2mZS/GVU=
 github.com/xoctopus/genx v0.3.6 h1:7GDTiEvo7E61SvucQAGqdZUf5FKtvRQ1cmE2quTjETA=
 github.com/xoctopus/genx v0.3.6/go.mod h1:WHm4LHMqCWZx/KxcylDzDB/e2ZPSFABlnprNQMno0e4=
 github.com/xoctopus/genx v0.3.7 h1:jvh8XFPpbJhhc0UNw1eunn/k5ASXiEPakVXN0LSGlMc=
