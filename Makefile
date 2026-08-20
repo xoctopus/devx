@@ -139,6 +139,10 @@ fmt-check: fmt
 	@echo "==> checking code format"
 	@if [ -n "$$(git status --porcelain)" ]; then \
 		echo "code is not properly formatted."; \
+		echo "==> git status --porcelain"; \
+		git status --porcelain; \
+		echo "==> git diff"; \
+		git diff; \
 		exit 1; \
 	fi
 
