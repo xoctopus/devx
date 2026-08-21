@@ -16,7 +16,7 @@ require (
 
 require (
 	github.com/spf13/cobra v1.10.2
-	github.com/xoctopus/confx v0.5.6
+	github.com/xoctopus/confx v0.5.7
 )
 
 require (

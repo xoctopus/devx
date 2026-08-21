@@ -1,8 +1,18 @@
 
 <a name="HEAD"></a>
-## [HEAD](https://github.com/xoctopus/devx/compare/v0.6.1...HEAD)
+## [HEAD](https://github.com/xoctopus/devx/compare/v0.6.2...HEAD)
+
+> 0001-01-01
+
+
+<a name="v0.6.2"></a>
+## [v0.6.2](https://github.com/xoctopus/devx/compare/v0.6.1...v0.6.2)
 
 > 2026-08-21
+
+### Chore
+
+* update version and doc
 
 ### Ci
 

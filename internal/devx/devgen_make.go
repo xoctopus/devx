@@ -142,17 +142,24 @@ FORMAT_IGNORES := %q
 # git repository info
 IS_GIT_REPO := $(shell git rev-parse --is-inside-work-tree >/dev/null 2>&1 && echo 1 || echo 0)
 ifeq ($(IS_GIT_REPO),1)
-export GIT_COMMIT := $(shell git rev-parse --short HEAD 2>/dev/null || echo "")
-export GIT_TAG    := $(shell git describe --tags --abbrev=0 2>/dev/null || echo "")
-export GIT_BRANCH := $(shell git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "")
+export GIT_COMMIT_RAW := $(shell git rev-parse --short HEAD 2>/dev/null || echo "")
+export GIT_COMMIT_AT  := $(shell git log -1 --format=%%cd --date=format:%%Y%%m%%d%%H%%M%%S 2>/dev/null || echo "")
+export GIT_TAG        := $(shell git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
+export GIT_BRANCH     := $(shell git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "")
+ifeq ($(shell git status --porcelain 2>/dev/null),)
+export GIT_COMMIT := $(GIT_COMMIT_RAW)
 else
-export GIT_COMMIT := ""
-export GIT_TAG    := ""
-export GIT_BRANCH := ""
+export GIT_COMMIT := $(GIT_COMMIT_RAW)-dirty
 endif
-export BUILD_AT := $(shell date "+%s")
+else
+export GIT_COMMIT    := ""
+export GIT_COMMIT_AT := ""
+export GIT_TAG       := v0.0.0
+export GIT_BRANCH    := ""
+endif
+export BUILD_AT := $(shell date "+%%Y%%m%%d%%H%%M%%S")
 export MODULE_PATH
-`, strings.Join(m.TestIgnore, "|"), strings.Join(m.FormatIgnore, ","), "%Y%m%d%H%M%S")
+`, strings.Join(m.TestIgnore, "|"), strings.Join(m.FormatIgnore, ","))
 
 	_, _ = w.WriteString("\n# global env variables\n")
 	// _ = WriteKeyValAlign(w, "export ", ":=", m.envs)
@@ -192,9 +199,10 @@ show:
 	@echo "	module=$(MODULE_NAME)"
 	@echo "git:"
 	@echo "	commit_id=$(GIT_COMMIT)"
+	@echo "	commit_at=$(GIT_COMMIT_AT)"
 	@echo "	tag=$(GIT_TAG)"
 	@echo "	branch=$(GIT_BRANCH)"
-	@echo "	build_time=$(BUILD_AT)"
+	@echo "	build_at=$(BUILD_AT)"
 	@echo "	name=$(MODULE_NAME)"
 	@echo "tools:"
 	@echo "	build=$(GOBUILD)"

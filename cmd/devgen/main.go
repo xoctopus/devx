@@ -1,7 +1,6 @@
 package main
 
 import (
-	_ "embed"
 	"runtime/debug"
 	"strings"
 
@@ -11,25 +10,20 @@ import (
 )
 
 var (
-	Name      string
-	Branch    string
-	Version   string
-	CommitID  string
-	BuildTime string
-
-	//go:embed version
-	version string
+	Name     string
+	Feature  string
+	Version  string
+	CommitID string
+	CommitAt string
+	BuildAt  string
 )
 
 var CmdVersion = &cobra.Command{
 	Use: "version",
 	Run: func(cmd *cobra.Command, args []string) {
 		if Name != "" {
-			cmd.Printf("%s:%s@%s#%s_%s\n", Name, Branch, Version, CommitID, BuildTime)
-		} else {
-			if version != "" {
-				cmd.Println(strings.TrimSpace(version))
-			}
+			cmd.Printf("%s:%s@%s#%s()[commit=%s|build=%s]\n",
+				Name, Feature, Version, CommitID, CommitAt, BuildAt)
 		}
 		if info, ok := debug.ReadBuildInfo(); ok {
 			for _, dep := range info.Deps {
