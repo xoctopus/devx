@@ -22,10 +22,16 @@ import (
 
 var (
 	CmdMakefile = cmdx.NewCommand("make", &Makefile{}).Cmd()
-	//go:embed static/target.mk.tpl
+	//go:embed static/project.tpl.mk
+	gProjectMakefile []byte
+	//go:embed static/target.tpl.mk
 	gTargetMakefile []byte
-	//go:embed static/target.img.tpl
+	//go:embed static/target.tpl.dockerfile
 	gTargetImage []byte
+
+	gProjectTplMakefile  = must.NoErrorV(template.New("project").Parse(string(gProjectMakefile)))
+	gTargetTplMakefile   = must.NoErrorV(template.New("target").Parse(string(gTargetMakefile)))
+	gTargetTplDockerfile = must.NoErrorV(template.New("image").Parse(string(gTargetImage)))
 )
 
 // Target cmd/<name> build target
@@ -48,6 +54,42 @@ type ImageOption struct {
 	GoProxy string `json:"go_proxy,omitempty"`
 	// Expose container expose port
 	Expose string `json:"expose,omitempty"`
+}
+
+type EnvVar struct {
+	Key   string
+	Value string
+}
+
+type EnvVars []EnvVar
+
+type EnvShow struct {
+	Key     string
+	Padding string
+}
+
+type ProjectTarget struct {
+	Name  string
+	Entry string
+	Image bool
+}
+
+type ProjectMakeData struct {
+	TestIgnores   string
+	FormatIgnores string
+	Envs          []EnvVar
+	EnvShows      []EnvShow
+	GoTools       string
+	DepFlags      string
+	Depends       Depends
+	TestDep       string
+	BenchFlag     string
+	HackTest      bool
+	Targets       []ProjectTarget
+	TargetNames   string
+	ImageNames    string
+	HasTargets    bool
+	HasImages     bool
 }
 
 // Makefile generates go project Makefile
@@ -83,15 +125,10 @@ func (m *Makefile) Exec(cmd *cobra.Command, args ...string) (err error) {
 	}
 	co.Collect(f.Close)
 
-	m.vars(f)
-	m.show(f)
-	m.dep(f)
-	m.tidy(f)
-	m.test(f)
-	if len(m.Target) > 0 {
-		m.target(cmd, f)
+	data := m.buildProjectData(cmd)
+	if err = gProjectTplMakefile.Execute(f, data); err != nil {
+		return err
 	}
-	m.check(f)
 
 	cmd.Println("==> generated Makefile")
 	return nil
@@ -131,189 +168,70 @@ func (m *Makefile) init(cmd *cobra.Command) {
 	}
 }
 
-func (m *Makefile) vars(w *os.File) {
-	_, _ = fmt.Fprintf(w, `
-# go package info
-MODULE_PATH    := $(shell cat go.mod | grep ^module -m 1 | awk '{ print $$2; }' || '')
-MODULE_NAME    := $(shell basename $(MODULE_PATH))
-TEST_IGNORES   := %q
-FORMAT_IGNORES := %q
-
-# git repository info
-IS_GIT_REPO := $(shell git rev-parse --is-inside-work-tree >/dev/null 2>&1 && echo 1 || echo 0)
-ifeq ($(IS_GIT_REPO),1)
-export GIT_COMMIT_RAW := $(shell git rev-parse --short HEAD 2>/dev/null || echo "")
-export GIT_COMMIT_AT  := $(shell git log -1 --format=%%cd --date=format:%%Y%%m%%d%%H%%M%%S 2>/dev/null || echo "")
-export GIT_TAG        := $(shell git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
-export GIT_BRANCH     := $(shell git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "")
-ifeq ($(shell git status --porcelain 2>/dev/null),)
-export GIT_COMMIT := $(GIT_COMMIT_RAW)
-else
-export GIT_COMMIT := $(GIT_COMMIT_RAW)-dirty
-endif
-else
-export GIT_COMMIT    := ""
-export GIT_COMMIT_AT := ""
-export GIT_TAG       := v0.0.0
-export GIT_BRANCH    := ""
-endif
-export BUILD_AT := $(shell date "+%%Y%%m%%d%%H%%M%%S")
-export MODULE_PATH
-`, strings.Join(m.TestIgnore, "|"), strings.Join(m.FormatIgnore, ","))
-
-	_, _ = w.WriteString("\n# global env variables\n")
-	// _ = WriteKeyValAlign(w, "export ", ":=", m.envs)
-	for _, v := range m.envs {
-		_, _ = w.WriteString(fmt.Sprintf("%s ?= %s\n", v[0], v[1]))
-		_, _ = w.WriteString(fmt.Sprintf("export %s\n", v[0]))
-	}
-
-	_, _ = w.WriteString(`
-# use vendor when the module is vendored
-ifneq ($(wildcard vendor/modules.txt),)
-export GOFLAGS := $(GOFLAGS) -mod=vendor
-endif
-`)
-
-	_, _ = w.WriteString("\n# go build tools\n")
-	_ = WriteKeyValAlign(w, "", ":=", DefaultGoTools)
-
-	kvs := make([][2]string, 0)
+func (m *Makefile) buildProjectData(cmd *cobra.Command) ProjectMakeData {
+	depKVs := make([][2]string, 0, len(m.Depends))
 	for _, d := range m.Depends {
-		kvs = append(kvs, [2]string{
+		depKVs = append(depKVs, [2]string{
 			"DEP_" + stringsx.UpperSnakeCase(d.Name),
 			"$(shell type " + d.Name + " > /dev/null 2>&1 && echo $$?)",
 		})
 	}
-	_, _ = w.Write([]byte("\n# dependencies flags\n"))
-	_ = WriteKeyValAlign(w, "", ":=", kvs)
-}
 
-func (m *Makefile) show(w *os.File) {
-	var text strings.Builder
-
-	text.WriteString(`
-show:
-	@echo "module:"
-	@echo "	path=$(MODULE_PATH)"
-	@echo "	module=$(MODULE_NAME)"
-	@echo "git:"
-	@echo "	commit_id=$(GIT_COMMIT)"
-	@echo "	commit_at=$(GIT_COMMIT_AT)"
-	@echo "	tag=$(GIT_TAG)"
-	@echo "	branch=$(GIT_BRANCH)"
-	@echo "	build_at=$(BUILD_AT)"
-	@echo "	name=$(MODULE_NAME)"
-	@echo "tools:"
-	@echo "	build=$(GOBUILD)"
-	@echo "	test=$(GOTEST)"
-`)
-	for _, d := range m.Depends {
-		text.WriteString(fmt.Sprintf(`	@echo "	%s=$(shell which %s) $(%s)"`, d.Name, d.Name, d.DepKey()) + "\n")
-	}
-	n := 0
+	envPad := 0
 	for _, v := range m.envs {
-		if len(v[0]) > n {
-			n = len(v[0])
+		if len(v[0]) > envPad {
+			envPad = len(v[0])
 		}
 	}
-	text.WriteString(`	@echo "envs:"` + "\n")
+	envShows := make([]EnvShow, 0, len(m.envs))
 	for _, v := range m.envs {
-		text.WriteString(fmt.Sprintf(`	@echo "	%s: %s$(%s)"`, v[0], strings.Repeat(" ", n-len(v[0])), v[0]) + "\n")
-	}
-	text.WriteString(`	@echo "	GOFLAGS: $(GOFLAGS)"` + "\n")
-	_, _ = w.WriteString(text.String())
-}
-
-func (m *Makefile) dep(w *os.File) {
-	text := `
-dep:
-	@echo "==> installing dependencies"`
-	for _, d := range m.Depends {
-		text += fmt.Sprintf(`
-	@if [ "${%s}" != "0" ]; then \
-		echo "	%s for %s"; \
-		go install %s@%s; \
-		echo "	DONE."; \
-	fi`, d.DepKey(), d.Name, d.Description, d.Repo, d.Version)
+		envShows = append(envShows, EnvShow{
+			Key:     v[0],
+			Padding: strings.Repeat(" ", envPad-len(v[0])),
+		})
 	}
 
-	_, _ = w.WriteString(text + "\n")
-
-	text = `
-upgrade-dep:
-	@echo "==> upgrading dependencies"`
-
-	for _, d := range m.Depends {
-		text += fmt.Sprintf(`
-	@echo "	%s for %s"
-	@go install %s@%s
-	@echo "	DONE."`, d.Name, d.Description, d.Repo, d.Version)
-	}
-
-	_, _ = w.WriteString(text + "\n")
-}
-
-func (m *Makefile) tidy(w *os.File) {
-	text := `
-tidy:
-	@echo "==> go mod tidy"
-	@go mod tidy
-	@if [ -d vendor ]; then \
-		echo "==> go mod vendor"; \
-		go mod vendor; \
-	fi`
-	_, _ = w.WriteString(text + "\n")
-}
-
-func (m *Makefile) test(w *os.File) {
-	m.hack(w)
-
-	dep := "dep tidy"
+	testDep := "dep tidy"
 	if m.HackTest {
-		dep += " hack_dep_run"
+		testDep += " hack_dep_run"
 	}
-	bench := ""
+
+	benchFlag := ""
 	if m.EnableBenchCover {
-		bench = "-bench=. "
+		benchFlag = "-bench=. "
 	}
 
-	text := fmt.Sprintf(`
-test: %s
-	@echo "==> run unit test"
-	@$(GOTEST) test ./... -race -failfast -parallel 1 -gcflags="all=-N -l"
+	targets, targetNames, imageNames := m.resolveTargets(cmd)
 
-cover: %s
-	@echo "==> run unit test with coverage"
-	@$(GOTEST) test ./... %s-failfast -parallel 1 -gcflags="all=-N -l" -covermode=count -coverprofile=cover.out
-	@grep -vE $(TEST_IGNORES) cover.out > cover2.out && mv cover2.out cover.out
-
-view-cover: cover
-	@echo "==> run unit test with coverage and view results"
-	@$(GOBUILD) tool cover -html cover.out
-
-ci-cover: lint cover
-`, dep, dep, bench)
-	_, _ = w.WriteString(text + "\n")
-}
-
-func (m *Makefile) hack(w *os.File) {
-	if !m.HackTest {
-		return
+	envs := make([]EnvVar, 0, len(m.envs))
+	for _, v := range m.envs {
+		envs = append(envs, EnvVar{Key: v[0], Value: v[1]})
 	}
 
-	_, _ = w.WriteString(`
-hack_dep_run:
-	@cd hack && docker compose up -d --remove-orphans
-
-hack_dep_stop:
-	@cd hack && docker compose down -v
-`)
+	return ProjectMakeData{
+		TestIgnores:   strings.Join(m.TestIgnore, "|"),
+		FormatIgnores: strings.Join(m.FormatIgnore, ","),
+		Envs:          envs,
+		EnvShows:      envShows,
+		GoTools:       formatKeyValAlign("", ":=", DefaultGoTools),
+		DepFlags:      formatKeyValAlign("", ":=", depKVs),
+		Depends:       m.Depends,
+		TestDep:       testDep,
+		BenchFlag:     benchFlag,
+		HackTest:      m.HackTest,
+		Targets:       targets,
+		TargetNames:   strings.Join(targetNames, " "),
+		ImageNames:    strings.Join(imageNames, " "),
+		HasTargets:    len(targetNames) > 0,
+		HasImages:     len(imageNames) > 0,
+	}
 }
 
-func (m *Makefile) target(cmd *cobra.Command, w *os.File) {
-	names := make([]string, 0, len(m.Target))
-	images := make([]string, 0, len(m.Target))
+func (m *Makefile) resolveTargets(cmd *cobra.Command) ([]ProjectTarget, []string, []string) {
+	targets := make([]ProjectTarget, 0, len(m.Target))
+	targetNames := make([]string, 0, len(m.Target))
+	imageNames := make([]string, 0, len(m.Target))
+
 	for _, t := range m.Target {
 		entry := filepath.Join("cmd", t.Name)
 		fi, err := os.Stat(entry)
@@ -321,33 +239,27 @@ func (m *Makefile) target(cmd *cobra.Command, w *os.File) {
 			fmt.Printf("WARN: target entry `%s` is not exists or not a folder\n", entry)
 			continue
 		}
-		// generate cmd Makefile
+
 		m.cmdMake(cmd, t)
 
-		_, _ = fmt.Fprintf(w, `
-target_%s:
-	@make -C %s --no-print-directory install
-`, t.Name, entry)
-		names = append(names, "target_"+t.Name)
-
+		targets = append(targets, ProjectTarget{
+			Name:  t.Name,
+			Entry: entry,
+			Image: t.Image != nil,
+		})
+		targetNames = append(targetNames, "target_"+t.Name)
 		if t.Image != nil {
-			_, _ = fmt.Fprintf(w, `
-image_%s:
-	@make -C %s --no-print-directory image
-`, t.Name, entry)
-			images = append(images, "image_"+t.Name)
+			imageNames = append(imageNames, "image_"+t.Name)
 		}
 	}
 
-	_, _ = fmt.Fprintf(w, `
-targets: %s
-`, strings.Join(names, " "))
+	return targets, targetNames, imageNames
+}
 
-	if len(images) > 0 {
-		_, _ = fmt.Fprintf(w, `
-images: %s
-`, strings.Join(images, " "))
-	}
+func formatKeyValAlign(prefix, join string, kvs [][2]string) string {
+	var b strings.Builder
+	_ = WriteKeyValAlign(&b, prefix, join, kvs)
+	return strings.TrimRight(b.String(), "\n")
 }
 
 func (m *Makefile) cmdMake(cmd *cobra.Command, t Target) {
@@ -355,8 +267,7 @@ func (m *Makefile) cmdMake(cmd *cobra.Command, t Target) {
 	f := must.NoErrorV(os.OpenFile(filename, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0666))
 	defer func() { _ = f.Close() }()
 
-	tpl := must.NoErrorV(template.New("makefile").Parse(string(gTargetMakefile)))
-	must.NoError(tpl.Execute(f, map[string]any{"Image": t.Image != nil}))
+	must.NoError(gTargetTplMakefile.Execute(f, map[string]any{"Image": t.Image != nil}))
 
 	if t.Image != nil {
 		m.cmdImage(cmd, t.Name, t.Image)
@@ -372,9 +283,8 @@ func (m *Makefile) cmdImage(cmd *cobra.Command, name string, i *ImageOption) {
 		cgoEnabled = "1"
 	}
 
-	tpl := must.NoErrorV(template.New("dockerfile").Parse(string(gTargetImage)))
 	var buf bytes.Buffer
-	must.NoError(tpl.Execute(&buf, map[string]any{
+	must.NoError(gTargetTplDockerfile.Execute(&buf, map[string]any{
 		"Name":       name,
 		"GoVersion":  goVersion,
 		"Runtime":    runtime,
@@ -405,48 +315,4 @@ func goModVersion() (string, error) {
 		}
 	}
 	return "", fmt.Errorf("go version not found in go.mod")
-}
-
-func (m *Makefile) check(w *os.File) {
-	text := `
-fmt: dep clean
-	@echo "==> formating code"
-	@goimports-reviser -rm-unused \
-		-imports-order 'std,general,company,project' \
-		-project-name ${MODULE_PATH} \
-		-excludes $(FORMAT_IGNORES) ./...
-
-fmt-check: fmt
-	@echo "==> checking code format"
-	@if [ -n "$$(git status --porcelain)" ]; then \
-		echo "code is not properly formatted."; \
-		echo "==> git status --porcelain"; \
-		git status --porcelain; \
-		echo "==> git diff"; \
-		git diff; \
-		exit 1; \
-	fi
-
-lint: dep
-	@echo "==> linting"
-	@echo ">>>golangci-lint"
-	@golangci-lint run
-	@go vet ./...
-	@echo "done"
-
-clean:
-	@find . -name cover.out | xargs rm -rf
-	@find . -name .xgo | xargs rm -rf
-	@rm -rf build/*
-
-changelog:
-	@git chglog --next-tag HEAD -o CHANGELOG.md || true
-
-pre-commit: dep fmt lint view-cover changelog`
-	if len(m.Target) > 0 {
-		text = text + " targets"
-	}
-	text = text + "\n"
-
-	_, _ = w.WriteString(text)
 }
