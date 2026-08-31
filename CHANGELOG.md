@@ -1,8 +1,32 @@
 
 <a name="HEAD"></a>
-## [HEAD](https://github.com/xoctopus/devx/compare/v0.6.2...HEAD)
+## [HEAD](https://github.com/xoctopus/devx/compare/v0.6.4...HEAD)
 
-> 0001-01-01
+> 2026-08-31
+
+### Chore
+
+* bump Go to 1.27.0
+
+
+<a name="v0.6.4"></a>
+## [v0.6.4](https://github.com/xoctopus/devx/compare/v0.6.3...v0.6.4)
+
+> 2026-08-23
+
+### Refactor
+
+* **make:** generate project Makefile from project.tpl.mk
+
+
+<a name="v0.6.3"></a>
+## [v0.6.3](https://github.com/xoctopus/devx/compare/v0.6.2...v0.6.3)
+
+> 2026-08-21
+
+### Refactor
+
+* **make:** align build meta with appx CommitAt/BuildAt
 
 
 <a name="v0.6.2"></a>
