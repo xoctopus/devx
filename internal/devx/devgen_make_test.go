@@ -17,7 +17,8 @@ func TestProjectMakefileTemplateVendorMode(t *testing.T) {
 	tool.SetDefault()
 
 	data := ProjectMakeData{
-		Depends: Depends{tool},
+		GoModDir: "",
+		Depends:  Depends{tool},
 	}
 
 	var buf bytes.Buffer
@@ -33,10 +34,17 @@ func TestProjectMakefileTemplateVendorMode(t *testing.T) {
 
 func TestTargetMakefileTemplateVendorMode(t *testing.T) {
 	var buf bytes.Buffer
-	Expect(t, gTargetTplMakefile.Execute(&buf, map[string]any{"Image": false}), Succeed())
+	Expect(t, gTargetTplMakefile.Execute(&buf, map[string]any{
+		"Image":    false,
+		"GoModDir": "../../",
+	}), Succeed())
 
 	out := buf.String()
 	Expect(t, out, ContainsSubString("wildcard ../../vendor/modules.txt"))
 	Expect(t, out, ContainsSubString("GO_MOD_FLAG := -mod=vendor"))
 	Expect(t, out, ContainsSubString("go build $(GO_MOD_FLAG)"))
+	Expect(t, out, ContainsSubString("export GOFLAGS := $(GOFLAGS) -buildvcs=false"))
+	Expect(t, out, ContainsSubString("cat ../../go.mod"))
+	Expect(t, out, ContainsSubString("export GIT_COMMIT"))
+	Expect(t, out, ContainsSubString("export BUILD_AT"))
 }

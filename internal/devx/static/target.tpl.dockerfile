@@ -3,13 +3,17 @@
 FROM golang:{{.GoVersion}}-alpine AS builder
 
 # build env
-ENV CGO_ENABLED={{.CgoEnabled}}{{if .GoProxy}} \
+ENV CGO_ENABLED={{.CgoEnabled}} \
+    GOFLAGS=-buildvcs=false{{if .GoProxy}} \
     GOPROXY={{.GoProxy}}{{end}}
 
 RUN apk add --no-cache make git
 
 WORKDIR /go/src
 COPY ./ ./
+
+# Trust copied VCS metadata when repo ownership differs from the build user.
+RUN git config --global --add safe.directory /go/src
 
 RUN make target_{{.Name}}
 

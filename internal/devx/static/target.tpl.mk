@@ -1,3 +1,4 @@
+{{template "meta" .}}
 NAME         := $(shell basename $(CURDIR))
 DIST         := $(abspath ../../dist/${NAME})
 DIST_NAME    := dist/${NAME}
@@ -18,6 +19,7 @@ ifeq ($(GOOS),"windows")
 OUT := ${OUT}.exe
 endif
 
+export GOFLAGS := $(GOFLAGS) -buildvcs=false
 ifneq ($(wildcard ../../vendor/modules.txt),)
 GO_MOD_FLAG := -mod=vendor
 export GOFLAGS := $(GOFLAGS) -mod=vendor

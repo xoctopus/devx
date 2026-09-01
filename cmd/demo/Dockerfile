@@ -3,12 +3,16 @@
 FROM golang:1.27.0-alpine AS builder
 
 # build env
-ENV CGO_ENABLED=0
+ENV CGO_ENABLED=0 \
+    GOFLAGS=-buildvcs=false
 
 RUN apk add --no-cache make git
 
 WORKDIR /go/src
 COPY ./ ./
+
+# Trust copied VCS metadata when repo ownership differs from the build user.
+RUN git config --global --add safe.directory /go/src
 
 RUN make target_demo
 

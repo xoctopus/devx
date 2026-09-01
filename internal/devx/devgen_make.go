@@ -24,15 +24,25 @@ var (
 	CmdMakefile = cmdx.NewCommand("make", &Makefile{}).Cmd()
 	//go:embed static/project.tpl.mk
 	gProjectMakefile []byte
+	//go:embed static/meta.tpl.mk
+	gMetaMakefile []byte
 	//go:embed static/target.tpl.mk
 	gTargetMakefile []byte
 	//go:embed static/target.tpl.dockerfile
 	gTargetImage []byte
 
-	gProjectTplMakefile  = must.NoErrorV(template.New("project").Parse(string(gProjectMakefile)))
-	gTargetTplMakefile   = must.NoErrorV(template.New("target").Parse(string(gTargetMakefile)))
+	gProjectTplMakefile  = parseTemplates("project", gMetaMakefile, gProjectMakefile)
+	gTargetTplMakefile   = parseTemplates("target", gMetaMakefile, gTargetMakefile)
 	gTargetTplDockerfile = must.NoErrorV(template.New("image").Parse(string(gTargetImage)))
 )
+
+func parseTemplates(name string, parts ...[]byte) *template.Template {
+	t := template.New(name)
+	for _, part := range parts {
+		t = must.NoErrorV(t.Parse(string(part)))
+	}
+	return t
+}
 
 // Target cmd/<name> build target
 type Target struct {
@@ -75,6 +85,7 @@ type ProjectTarget struct {
 }
 
 type ProjectMakeData struct {
+	GoModDir      string
 	TestIgnores   string
 	FormatIgnores string
 	Envs          []EnvVar
@@ -209,6 +220,7 @@ func (m *Makefile) buildProjectData(cmd *cobra.Command) ProjectMakeData {
 	}
 
 	return ProjectMakeData{
+		GoModDir:      "",
 		TestIgnores:   strings.Join(m.TestIgnore, "|"),
 		FormatIgnores: strings.Join(m.FormatIgnore, ","),
 		Envs:          envs,
@@ -267,7 +279,10 @@ func (m *Makefile) cmdMake(cmd *cobra.Command, t Target) {
 	f := must.NoErrorV(os.OpenFile(filename, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0666))
 	defer func() { _ = f.Close() }()
 
-	must.NoError(gTargetTplMakefile.Execute(f, map[string]any{"Image": t.Image != nil}))
+	must.NoError(gTargetTplMakefile.Execute(f, map[string]any{
+		"Image":    t.Image != nil,
+		"GoModDir": "../../",
+	}))
 
 	if t.Image != nil {
 		m.cmdImage(cmd, t.Name, t.Image)

@@ -1,12 +1,9 @@
 
 # go package info
-MODULE_PATH    := $(shell cat go.mod | grep ^module -m 1 | awk '{ print $$2; }' || '')
-MODULE_NAME    := $(shell basename $(MODULE_PATH))
-TEST_IGNORES   := "_gen.go|.pb.go|_mock.go|_genx_|main.go|testing.go|example/|testutil/|testdata/|hack/|vendor/"
-FORMAT_IGNORES := ".git/,.xgo/,*.pb.go,*_genx_*,*_gen.go,*_mock.go,vendor/"
 
 # git repository info
 META_TZ := Asia/Shanghai
+MODULE_PATH := $(shell cat go.mod | grep ^module -m 1 | awk '{ print $$2; }' || '')
 IS_GIT_REPO := $(shell git rev-parse --is-inside-work-tree >/dev/null 2>&1 && echo 1 || echo 0)
 ifeq ($(IS_GIT_REPO),1)
 export GIT_COMMIT_RAW := $(shell git rev-parse --short HEAD 2>/dev/null || echo "")
@@ -26,6 +23,10 @@ export GIT_BRANCH    := ""
 endif
 export BUILD_AT := $(shell TZ=$(META_TZ) date "+%Y%m%d%H%M%SCST")
 export MODULE_PATH
+
+MODULE_NAME    := $(shell basename $(MODULE_PATH))
+TEST_IGNORES   := "_gen.go|.pb.go|_mock.go|_genx_|main.go|testing.go|example/|testutil/|testdata/|hack/|vendor/"
+FORMAT_IGNORES := ".git/,.xgo/,*.pb.go,*_genx_*,*_gen.go,*_mock.go,vendor/"
 
 # global env variables
 GOWORK ?= off
