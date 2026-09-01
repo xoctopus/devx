@@ -85,6 +85,7 @@ type ProjectMakeData struct {
 	TestDep       string
 	BenchFlag     string
 	HackTest      bool
+	HasVendor     bool
 	Targets       []ProjectTarget
 	TargetNames   string
 	ImageNames    string
@@ -219,6 +220,7 @@ func (m *Makefile) buildProjectData(cmd *cobra.Command) ProjectMakeData {
 		TestDep:       testDep,
 		BenchFlag:     benchFlag,
 		HackTest:      m.HackTest,
+		HasVendor:     hasVendorModules(),
 		Targets:       targets,
 		TargetNames:   strings.Join(targetNames, " "),
 		ImageNames:    strings.Join(imageNames, " "),
@@ -267,7 +269,10 @@ func (m *Makefile) cmdMake(cmd *cobra.Command, t Target) {
 	f := must.NoErrorV(os.OpenFile(filename, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0666))
 	defer func() { _ = f.Close() }()
 
-	must.NoError(gTargetTplMakefile.Execute(f, map[string]any{"Image": t.Image != nil}))
+	must.NoError(gTargetTplMakefile.Execute(f, map[string]any{
+		"Image":     t.Image != nil,
+		"HasVendor": hasVendorModules(),
+	}))
 
 	if t.Image != nil {
 		m.cmdImage(cmd, t.Name, t.Image)
@@ -299,6 +304,10 @@ func (m *Makefile) cmdImage(cmd *cobra.Command, name string, i *ImageOption) {
 	defer func() { _ = f.Close() }()
 	must.NoErrorV(io.Copy(f, &buf))
 	cmd.Printf("==> generated %s\n", filename)
+}
+
+func hasVendorModules() bool {
+	return FileCheck("vendor/modules.txt", false)
 }
 
 func goModVersion() (string, error) {

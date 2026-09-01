@@ -18,10 +18,10 @@ ifeq ($(GOOS),"windows")
 OUT := ${OUT}.exe
 endif
 
-# use vendor when the module is vendored (cmd/<name> -> module root)
-ifneq ($(wildcard ../../vendor/modules.txt),)
+{{if .HasVendor}}
+# vendored module (cmd/<name> -> module root; detected at devgen make time)
 export GOFLAGS := $(GOFLAGS) -mod=vendor
-endif
+{{end}}
 
 build:
 	@echo "==> building $(NAME)..."

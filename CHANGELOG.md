@@ -1,12 +1,28 @@
 
 <a name="HEAD"></a>
-## [HEAD](https://github.com/xoctopus/devx/compare/v0.6.4...HEAD)
+## [HEAD](https://github.com/xoctopus/devx/compare/v0.6.6...HEAD)
+
+> 0001-01-01
+
+
+<a name="v0.6.6"></a>
+## [v0.6.6](https://github.com/xoctopus/devx/compare/v0.6.5...v0.6.6)
+
+> 2026-08-31
+
+
+<a name="v0.6.5"></a>
+## [v0.6.5](https://github.com/xoctopus/devx/compare/v0.6.4...v0.6.5)
 
 > 2026-08-31
 
 ### Chore
 
 * bump Go to 1.27.0
+
+### Docs
+
+* update CHANGELOG
 
 
 <a name="v0.6.4"></a>

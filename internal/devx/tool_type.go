@@ -39,16 +39,18 @@ type Depends []Tool
 
 var DefaultDepends = Depends{
 	{
-		Name:    "golangci-lint",
-		Repo:    "github.com/golangci/golangci-lint/v2/cmd/golangci-lint",
-		Version: "latest",
-		Type:    TOOL_TYPE__LINTER,
+		Name:        "golangci-lint",
+		Repo:        "github.com/golangci/golangci-lint/v2/cmd/golangci-lint",
+		Version:     "latest",
+		Type:        TOOL_TYPE__LINTER,
+		Description: "code static checking",
 	},
 	{
-		Name:    "goimports-reviser",
-		Repo:    "github.com/incu6us/goimports-reviser/v3",
-		Version: "latest",
-		Type:    TOOL_TYPE__FORMATER,
+		Name:        "goimports-reviser",
+		Repo:        "github.com/incu6us/goimports-reviser/v3",
+		Version:     "latest",
+		Type:        TOOL_TYPE__FORMATER,
+		Description: "code formating",
 	},
 	{
 		Name:        "git-chglog",
@@ -56,12 +58,5 @@ var DefaultDepends = Depends{
 		Version:     "latest",
 		Type:        TOOL_TYPE__DOC,
 		Description: "generating changelog",
-	},
-	{
-		Name:        "devgen",
-		Repo:        "github.com/xoctopus/devx/cmd/devgen",
-		Version:     "main",
-		Type:        TOOL_TYPE__DEVGEN,
-		Description: "dev configuration generating",
 	},
 }

@@ -30,10 +30,10 @@ export MODULE_PATH
 {{range .Envs}}{{.Key}} ?= {{.Value}}
 export {{.Key}}
 {{end}}
-# use vendor when the module is vendored
-ifneq ($(wildcard vendor/modules.txt),)
+{{if .HasVendor}}
+# vendored module (vendor/modules.txt detected at devgen make time)
 export GOFLAGS := $(GOFLAGS) -mod=vendor
-endif
+{{end}}
 
 # go build tools
 {{.GoTools}}
@@ -64,23 +64,24 @@ dep:
 	@echo "==> installing dependencies"
 {{range .Depends}}	@if [ "${{"{"}}{{.DepKey}}{{"}"}}" != "0" ]; then \
 		echo "	{{.Name}} for {{.Description}}"; \
-		go install {{.Repo}}@{{.Version}}; \
+		{{if $.HasVendor}}GOFLAGS=-mod=mod {{end}}go install {{.Repo}}@{{.Version}}; \
 		echo "	DONE."; \
 	fi
 {{end}}
 upgrade-dep:
 	@echo "==> upgrading dependencies"
 {{range .Depends}}	@echo "	{{.Name}} for {{.Description}}"
-	@go install {{.Repo}}@{{.Version}}
+	@{{if $.HasVendor}}GOFLAGS=-mod=mod {{end}}go install {{.Repo}}@{{.Version}}
 	@echo "	DONE."
 {{end}}
 tidy:
 	@echo "==> go mod tidy"
 	@go mod tidy
-	@if [ -d vendor ]; then \
+{{if .HasVendor}}	@if [ -d vendor ]; then \
 		echo "==> go mod vendor"; \
 		go mod vendor; \
 	fi
+{{end}}
 {{if .HackTest}}
 hack_dep_run:
 	@cd hack && docker compose up -d --remove-orphans
