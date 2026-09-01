@@ -2,7 +2,11 @@
 <a name="HEAD"></a>
 ## [HEAD](https://github.com/xoctopus/devx/compare/v0.6.6...HEAD)
 
-> 0001-01-01
+> 2026-09-01
+
+### Fix
+
+* **devgen:** detect vendor at make generation time
 
 
 <a name="v0.6.6"></a>

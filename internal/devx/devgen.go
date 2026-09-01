@@ -15,15 +15,13 @@ type Config struct {
 }
 
 var DefaultConfig = Config{
-	CI:   CI{CI: true},
-	Lint: Lint{Lint: true},
-	Makefile: Makefile{
-		TestIgnore:   DefaultTestIgnores,
-		FormatIgnore: DefaultFormatIgnores,
-		Env:          DefaultEnvs,
-		HackTest:     false,
-		Depends:      DefaultDepends,
-	},
+	CI:           CI{CI: true},
+	Lint:         Lint{Lint: true},
+	TestIgnore:   DefaultTestIgnores,
+	FormatIgnore: DefaultFormatIgnores,
+	Env:          DefaultEnvs,
+	HackTest:     false,
+	Depends:      DefaultDepends,
 }
 
 var CmdAll = cmdx.NewCommand("all", &All{}).Cmd()
