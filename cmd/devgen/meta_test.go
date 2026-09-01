@@ -3,6 +3,7 @@ package main
 import (
 	"runtime/debug"
 	"testing"
+	"time"
 
 	"github.com/xoctopus/confx/pkg/appx"
 	. "github.com/xoctopus/x/testx"
@@ -18,7 +19,14 @@ func TestFillMetaFromBuildVCSSettings(t *testing.T) {
 
 	Expect(t, m.Version, Equal(""))
 	Expect(t, m.CommitID, Equal("fb4138445579-dirty"))
-	Expect(t, m.CommitAt, Equal("20260901055033"))
+	Expect(t, m.CommitAt, Equal("20260901135033CST"))
+}
+
+func TestFormatTimestampCST(t *testing.T) {
+	ts, err := time.Parse(time.RFC3339, "2026-09-01T05:50:33Z")
+	Expect(t, err, Succeed())
+	Expect(t, formatTimestampCST(ts), Equal("20260901135033CST"))
+	Expect(t, formatPseudoCommitAt("20260901055033"), Equal("20260901135033CST"))
 }
 
 func TestFillMetaFromBuildPseudoVersion(t *testing.T) {
@@ -27,7 +35,7 @@ func TestFillMetaFromBuildPseudoVersion(t *testing.T) {
 
 	Expect(t, m.Version, Equal("v0.6.7"))
 	Expect(t, m.CommitID, Equal("fb4138445579"))
-	Expect(t, m.CommitAt, Equal("20260901055033"))
+	Expect(t, m.CommitAt, Equal("20260901135033CST"))
 }
 
 func TestFillMetaFromBuildPreservesLDFlags(t *testing.T) {
@@ -57,7 +65,7 @@ func TestFillMetaFromBuildUntaggedPseudoVersion(t *testing.T) {
 
 	Expect(t, m.Version, Equal("v0.0.0"))
 	Expect(t, m.CommitID, Equal("fb4138445579"))
-	Expect(t, m.CommitAt, Equal("20260901055033"))
+	Expect(t, m.CommitAt, Equal("20260901135033CST"))
 }
 
 func TestFillMetaFromBuildPseudoVersionWithDirtySuffix(t *testing.T) {
@@ -66,7 +74,7 @@ func TestFillMetaFromBuildPseudoVersionWithDirtySuffix(t *testing.T) {
 
 	Expect(t, m.Version, Equal("v0.6.7"))
 	Expect(t, m.CommitID, Equal("fb4138445579"))
-	Expect(t, m.CommitAt, Equal("20260901055033"))
+	Expect(t, m.CommitAt, Equal("20260901135033CST"))
 }
 
 func TestFillMetaFromBuildPlainModuleVersion(t *testing.T) {

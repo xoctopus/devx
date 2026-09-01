@@ -9,7 +9,11 @@ import (
 	"github.com/xoctopus/confx/pkg/appx"
 )
 
-const metaTimeLayout = "20060102150405"
+const (
+	metaTimeLayout = "20060102150405"
+	metaTimeSuffix = "CST"
+	metaTimeZone   = "Asia/Shanghai"
+)
 
 var pseudoVersionRE = regexp.MustCompile(`^v(\d+\.\d+\.\d+)-(?:\d+\.)?(\d{14})-([0-9a-f]+)$`)
 
@@ -75,7 +79,7 @@ func applyPseudoVersion(m *appx.Meta, pseudo string) {
 		m.Version = "v" + sub[1]
 	}
 	if m.CommitAt == "" {
-		m.CommitAt = sub[2]
+		m.CommitAt = formatPseudoCommitAt(sub[2])
 	}
 	if m.CommitID == "" {
 		m.CommitID = sub[3]
@@ -94,7 +98,23 @@ func formatCommitAt(vcsTime string) string {
 	if err != nil {
 		return ""
 	}
-	return t.UTC().Format(metaTimeLayout)
+	return formatTimestampCST(t)
+}
+
+func formatPseudoCommitAt(ts string) string {
+	t, err := time.ParseInLocation(metaTimeLayout, ts, time.UTC)
+	if err != nil {
+		return ts + metaTimeSuffix
+	}
+	return formatTimestampCST(t)
+}
+
+func formatTimestampCST(t time.Time) string {
+	loc, err := time.LoadLocation(metaTimeZone)
+	if err != nil {
+		loc = time.FixedZone(metaTimeSuffix, 8*3600)
+	}
+	return t.In(loc).Format(metaTimeLayout) + metaTimeSuffix
 }
 
 func stripModuleBuildSuffix(version string) string {

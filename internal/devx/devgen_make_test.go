@@ -26,7 +26,9 @@ func TestProjectMakefileTemplateVendorMode(t *testing.T) {
 	out := buf.String()
 	Expect(t, out, ContainsSubString("wildcard vendor/modules.txt"))
 	Expect(t, out, ContainsSubString("GO_INSTALL := GOFLAGS=-mod=mod go install"))
-	Expect(t, out, ContainsSubString("$(GO_INSTALL)"))
+	Expect(t, out, ContainsSubString("META_TZ := Asia/Shanghai"))
+	Expect(t, out, ContainsSubString("TZ=$(META_TZ) date \"+%Y%m%d%H%M%SCST\""))
+	Expect(t, out, ContainsSubString("date=format:%Y%m%d%H%M%SCST"))
 }
 
 func TestTargetMakefileTemplateVendorMode(t *testing.T) {
