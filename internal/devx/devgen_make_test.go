@@ -48,3 +48,26 @@ func TestTargetMakefileTemplateVendorMode(t *testing.T) {
 	Expect(t, out, ContainsSubString("export GIT_COMMIT"))
 	Expect(t, out, ContainsSubString("export BUILD_AT"))
 }
+
+func TestTargetDockerfileTemplateRunArgs(t *testing.T) {
+	var buf bytes.Buffer
+	Expect(t, gTargetTplDockerfile.Execute(&buf, map[string]any{
+		"Name":       "demo",
+		"GoVersion":  "1.27.0",
+		"Runtime":    "alpine:latest",
+		"CgoEnabled": "0",
+		"Expose":     "80",
+		"RunArgs":    []string{"run"},
+	}), Succeed())
+	Expect(t, buf.String(), ContainsSubString("ENTRYPOINT [\"/app/app\", \"run\"]"))
+
+	buf.Reset()
+	Expect(t, gTargetTplDockerfile.Execute(&buf, map[string]any{
+		"Name":       "demo",
+		"GoVersion":  "1.27.0",
+		"Runtime":    "alpine:latest",
+		"CgoEnabled": "0",
+	}), Succeed())
+	Expect(t, buf.String(), ContainsSubString("ENTRYPOINT [\"/app/app\"]"))
+	Expect(t, buf.String(), Not(ContainsSubString("ENTRYPOINT [\"/app/app\", ")))
+}

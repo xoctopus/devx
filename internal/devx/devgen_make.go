@@ -64,6 +64,8 @@ type ImageOption struct {
 	GoProxy string `json:"go_proxy,omitempty"`
 	// Expose container expose port
 	Expose string `json:"expose,omitempty"`
+	// RunArgs image run arguments
+	RunArgs []string `json:"run_args,omitempty"`
 }
 
 type EnvVar struct {
@@ -307,6 +309,7 @@ func (m *Makefile) cmdImage(cmd *cobra.Command, name string, i *ImageOption) {
 		"GoProxy":    i.GoProxy,
 		"TimeZone":   i.TimeZone,
 		"Expose":     i.Expose,
+		"RunArgs":    i.RunArgs,
 	}))
 
 	filename := filepath.Join("cmd", name, "Dockerfile")

@@ -10,6 +10,7 @@
 
 ### Fix
 
+* **devgen:** target VCS ldflags, -buildvcs=false, and docker safe.directory
 * **devgen:** vendor builds, CST timestamps, and go-install meta
 * **devgen:** vendor-aware makefiles and go-install build meta
 * **devgen:** runtime vendor mode and fill build meta on go install
