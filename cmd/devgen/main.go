@@ -19,15 +19,7 @@ var (
 )
 
 func init() {
-	meta = appx.Meta{
-		Name:     Name,
-		Feature:  Feature,
-		Version:  Version,
-		CommitID: CommitID,
-		CommitAt: CommitAt,
-		BuildAt:  BuildAt,
-		Runtime:  appx.GetRuntime(),
-	}
+	meta = buildMeta(Name, Feature, Version, CommitID, CommitAt, BuildAt)
 }
 
 var CmdVersion = &cobra.Command{

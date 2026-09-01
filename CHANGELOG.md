@@ -8,6 +8,10 @@
 
 * **devgen:** detect vendor at make generation time
 
+### Refactor
+
+* **devgen:** align version output with appx Meta
+
 
 <a name="v0.6.6"></a>
 ## [v0.6.6](https://github.com/xoctopus/devx/compare/v0.6.5...v0.6.6)
