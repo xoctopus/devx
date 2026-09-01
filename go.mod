@@ -10,7 +10,7 @@ tool (
 require (
 	github.com/spf13/cobra v1.10.2
 	// +skill:appx
-	github.com/xoctopus/confx v0.5.7
+	github.com/xoctopus/confx v0.5.9
 	// +skill:genx
 	github.com/xoctopus/genx v0.3.8
 	// +skill:testx
@@ -23,7 +23,6 @@ require (
 	github.com/spf13/pflag v1.0.10 // indirect
 	github.com/xoctopus/pkgx v0.4.4 // indirect
 	github.com/xoctopus/typx v0.4.7 // indirect
-	golang.org/x/exp v0.0.0-20260611194520-c48552f49976 // indirect
 	golang.org/x/mod v0.40.0 // indirect
 	golang.org/x/sync v0.22.0 // indirect
 	golang.org/x/tools v0.49.0 // indirect
