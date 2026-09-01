@@ -4,6 +4,10 @@
 
 > 2026-09-01
 
+### Feat
+
+* **devgen:** fill build meta from ReadBuildInfo when ldflags are empty
+
 ### Fix
 
 * **devgen:** detect vendor at make generation time

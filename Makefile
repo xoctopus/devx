@@ -30,7 +30,12 @@ export MODULE_PATH
 GOWORK ?= off
 export GOWORK
 
-
+ifneq ($(wildcard vendor/modules.txt),)
+export GOFLAGS := $(GOFLAGS) -mod=vendor
+GO_INSTALL := GOFLAGS=-mod=mod go install
+else
+GO_INSTALL := go install
+endif
 
 # go build tools
 GOTEST  := go
@@ -66,36 +71,39 @@ dep:
 	@echo "==> installing dependencies"
 	@if [ "${DEP_GIT_CHGLOG}" != "0" ]; then \
 		echo "	git-chglog for generating changelog"; \
-		go install github.com/git-chglog/git-chglog/cmd/git-chglog@latest; \
+		$(GO_INSTALL) github.com/git-chglog/git-chglog/cmd/git-chglog@latest; \
 		echo "	DONE."; \
 	fi
 	@if [ "${DEP_GOIMPORTS_REVISER}" != "0" ]; then \
 		echo "	goimports-reviser for code formating"; \
-		go install github.com/incu6us/goimports-reviser/v3@latest; \
+		$(GO_INSTALL) github.com/incu6us/goimports-reviser/v3@latest; \
 		echo "	DONE."; \
 	fi
 	@if [ "${DEP_GOLANGCI_LINT}" != "0" ]; then \
 		echo "	golangci-lint for code linting"; \
-		go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@latest; \
+		$(GO_INSTALL) github.com/golangci/golangci-lint/v2/cmd/golangci-lint@latest; \
 		echo "	DONE."; \
 	fi
 
 upgrade-dep:
 	@echo "==> upgrading dependencies"
 	@echo "	git-chglog for generating changelog"
-	@go install github.com/git-chglog/git-chglog/cmd/git-chglog@latest
+	@$(GO_INSTALL) github.com/git-chglog/git-chglog/cmd/git-chglog@latest
 	@echo "	DONE."
 	@echo "	goimports-reviser for code formating"
-	@go install github.com/incu6us/goimports-reviser/v3@latest
+	@$(GO_INSTALL) github.com/incu6us/goimports-reviser/v3@latest
 	@echo "	DONE."
 	@echo "	golangci-lint for code linting"
-	@go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@latest
+	@$(GO_INSTALL) github.com/golangci/golangci-lint/v2/cmd/golangci-lint@latest
 	@echo "	DONE."
 
 tidy:
 	@echo "==> go mod tidy"
 	@go mod tidy
-
+	@if [ -d vendor ]; then \
+		echo "==> go mod vendor"; \
+		go mod vendor; \
+	fi
 
 test: dep tidy
 	@echo "==> run unit test"

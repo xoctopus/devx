@@ -98,8 +98,8 @@ func formatCommitAt(vcsTime string) string {
 }
 
 func stripModuleBuildSuffix(version string) string {
-	if i := strings.Index(version, "+"); i >= 0 {
-		return version[:i]
+	if before, _, ok := strings.Cut(version, "+"); ok {
+		return before
 	}
 	return version
 }

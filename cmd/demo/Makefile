@@ -18,7 +18,9 @@ ifeq ($(GOOS),"windows")
 OUT := ${OUT}.exe
 endif
 
-
+ifneq ($(wildcard ../../vendor/modules.txt),)
+export GOFLAGS := $(GOFLAGS) -mod=vendor
+endif
 
 build:
 	@echo "==> building $(NAME)..."

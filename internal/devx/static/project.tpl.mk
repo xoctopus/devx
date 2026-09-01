@@ -30,10 +30,12 @@ export MODULE_PATH
 {{range .Envs}}{{.Key}} ?= {{.Value}}
 export {{.Key}}
 {{end}}
-{{if .HasVendor}}
-# vendored module (vendor/modules.txt detected at devgen make time)
+ifneq ($(wildcard vendor/modules.txt),)
 export GOFLAGS := $(GOFLAGS) -mod=vendor
-{{end}}
+GO_INSTALL := GOFLAGS=-mod=mod go install
+else
+GO_INSTALL := go install
+endif
 
 # go build tools
 {{.GoTools}}
@@ -64,24 +66,23 @@ dep:
 	@echo "==> installing dependencies"
 {{range .Depends}}	@if [ "${{"{"}}{{.DepKey}}{{"}"}}" != "0" ]; then \
 		echo "	{{.Name}} for {{.Description}}"; \
-		{{if $.HasVendor}}GOFLAGS=-mod=mod {{end}}go install {{.Repo}}@{{.Version}}; \
+		$(GO_INSTALL) {{.Repo}}@{{.Version}}; \
 		echo "	DONE."; \
 	fi
 {{end}}
 upgrade-dep:
 	@echo "==> upgrading dependencies"
 {{range .Depends}}	@echo "	{{.Name}} for {{.Description}}"
-	@{{if $.HasVendor}}GOFLAGS=-mod=mod {{end}}go install {{.Repo}}@{{.Version}}
+	@$(GO_INSTALL) {{.Repo}}@{{.Version}}
 	@echo "	DONE."
 {{end}}
 tidy:
 	@echo "==> go mod tidy"
 	@go mod tidy
-{{if .HasVendor}}	@if [ -d vendor ]; then \
+	@if [ -d vendor ]; then \
 		echo "==> go mod vendor"; \
 		go mod vendor; \
 	fi
-{{end}}
 {{if .HackTest}}
 hack_dep_run:
 	@cd hack && docker compose up -d --remove-orphans
