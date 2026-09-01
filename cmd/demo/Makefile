@@ -19,12 +19,15 @@ OUT := ${OUT}.exe
 endif
 
 ifneq ($(wildcard ../../vendor/modules.txt),)
+GO_MOD_FLAG := -mod=vendor
 export GOFLAGS := $(GOFLAGS) -mod=vendor
+else
+GO_MOD_FLAG :=
 endif
 
 build:
 	@echo "==> building $(NAME)..."
-	@go build -ldflags ${LDFLAGS} -o ${NAME}
+	@go build $(GO_MOD_FLAG) -ldflags ${LDFLAGS} -o ${NAME}
 	@cp ${NAME} ${OUT}
 	@echo DONE
 

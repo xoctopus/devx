@@ -10,6 +10,7 @@
 
 ### Fix
 
+* **devgen:** runtime vendor mode and fill build meta on go install
 * **devgen:** detect vendor at make generation time
 
 ### Refactor
