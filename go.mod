@@ -12,7 +12,7 @@ require (
 	// +skill:appx
 	github.com/xoctopus/confx v0.5.9
 	// +skill:genx
-	github.com/xoctopus/genx v0.3.8
+	github.com/xoctopus/genx v0.3.9
 	// +skill:testx
 	github.com/xoctopus/x v0.5.8
 )
