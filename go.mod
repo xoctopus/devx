@@ -14,7 +14,7 @@ require (
 	// +skill:genx
 	github.com/xoctopus/genx v0.3.8
 	// +skill:testx
-	github.com/xoctopus/x v0.5.8
+	github.com/xoctopus/x v0.5.9
 )
 
 require (
