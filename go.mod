@@ -10,11 +10,11 @@ tool (
 require (
 	github.com/spf13/cobra v1.10.2
 	// +skill:appx
-	github.com/xoctopus/confx v0.5.9
+	github.com/xoctopus/confx v0.6.2
 	// +skill:genx
-	github.com/xoctopus/genx v0.3.8
+	github.com/xoctopus/genx v0.3.9
 	// +skill:testx
-	github.com/xoctopus/x v0.5.8
+	github.com/xoctopus/x v0.5.9
 )
 
 require (
