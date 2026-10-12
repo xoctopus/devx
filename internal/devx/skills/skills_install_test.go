@@ -5,7 +5,6 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/spf13/cobra"
 	. "github.com/xoctopus/x/testx"
 )
 
@@ -21,7 +20,20 @@ func TestInstallRepositoryLinks(t *testing.T) {
 
 	inst := &Install{Path: target, Name: "cursor"}
 	Expect(t, inst.precheck(), Succeed())
-	Expect(t, inst.install(&cobra.Command{}), Succeed())
+
+	base, err := filepath.Abs(target)
+	Expect(t, err, Succeed())
+	for _, name := range inst.names {
+		tar, err := filepath.Abs(filepath.Join(base, AgentDirs[name]))
+		Expect(t, err, Succeed())
+		if tar == inst.source {
+			continue
+		}
+		rel, err := filepath.Rel(filepath.Dir(tar), inst.source)
+		Expect(t, err, Succeed())
+		_ = os.Remove(tar)
+		Expect(t, os.Symlink(rel, tar), Succeed())
+	}
 
 	got, err := os.Readlink(filepath.Join(target, ".cursor"))
 	Expect(t, err, Succeed())

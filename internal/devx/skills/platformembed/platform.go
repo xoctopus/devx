@@ -5,6 +5,7 @@ import (
 	"io"
 	"io/fs"
 	"os"
+	"path"
 	"path/filepath"
 	"sort"
 )
@@ -27,30 +28,31 @@ func Names() ([]string, error) {
 
 // MaterializeSkill writes one embedded skill tree into destDir (replaces existing).
 func MaterializeSkill(name, destDir string) error {
-	srcRoot := filepath.Join(Root, name)
+	// embed.FS paths always use '/' (not filepath.Join).
+	srcRoot := path.Join(Root, name)
 	if _, err := fs.Stat(FS, srcRoot); err != nil {
 		return fmt.Errorf("platform skill %q: %w", name, err)
 	}
 	_ = os.RemoveAll(destDir)
-	return fs.WalkDir(FS, srcRoot, func(path string, d fs.DirEntry, err error) error {
+	return fs.WalkDir(FS, srcRoot, func(embedPath string, d fs.DirEntry, err error) error {
 		if err != nil {
 			return err
 		}
-		rel, err := filepath.Rel(srcRoot, path)
+		rel, err := filepath.Rel(filepath.FromSlash(srcRoot), filepath.FromSlash(embedPath))
 		if err != nil {
 			return err
 		}
 		if rel == "." {
 			return nil
 		}
-		target := filepath.Join(destDir, rel)
+		target := filepath.Join(destDir, filepath.FromSlash(rel))
 		if d.IsDir() {
 			return os.MkdirAll(target, 0o755)
 		}
 		if err := os.MkdirAll(filepath.Dir(target), 0o755); err != nil {
 			return err
 		}
-		src, err := FS.Open(path)
+		src, err := FS.Open(embedPath)
 		if err != nil {
 			return err
 		}

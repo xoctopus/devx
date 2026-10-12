@@ -1,8 +1,14 @@
 
 <a name="HEAD"></a>
-## [HEAD](https://github.com/xoctopus/devx/compare/v0.6.6...HEAD)
+## [HEAD](https://github.com/xoctopus/devx/compare/v0.6.7...HEAD)
 
-> 2026-10-07
+> 0001-01-01
+
+
+<a name="v0.6.7"></a>
+## [v0.6.7](https://github.com/xoctopus/devx/compare/v0.6.6...v0.6.7)
+
+> 2026-10-12
 
 ### Chore
 
@@ -14,6 +20,7 @@
 
 ### Feat
 
+* **devgen:** add skill install for repo bridge and platform skills
 * **devgen:** fill build meta from ReadBuildInfo when ldflags are empty
 
 ### Fix
