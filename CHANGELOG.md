@@ -2,7 +2,15 @@
 <a name="HEAD"></a>
 ## [HEAD](https://github.com/xoctopus/devx/compare/v0.6.6...HEAD)
 
-> 2026-09-01
+> 2026-10-07
+
+### Chore
+
+* upgrade dependencies
+
+### Docs
+
+* update README
 
 ### Feat
 
@@ -10,6 +18,7 @@
 
 ### Fix
 
+* **devgen:** Kaniko-safe two-stage Dockerfile and image run_args
 * **devgen:** target VCS ldflags, -buildvcs=false, and docker safe.directory
 * **devgen:** vendor builds, CST timestamps, and go-install meta
 * **devgen:** vendor-aware makefiles and go-install build meta

@@ -1,2 +1,5 @@
 cmd/devgen/devgen
 dist/
+
+.claude
+.cursor

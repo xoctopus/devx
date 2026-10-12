@@ -4,7 +4,7 @@ Go 项目的开发脚手架生成器.通过 `devgen` 从统一配置生成 `Make
 
 ## 安装
 
-在模块根目录安装 CLI(推荐与项目 `go` 版本一致):
+在模块根目录安装 CLI (推荐与项目 `go` 版本一致):
 
 ```bash
 go install github.com/xoctopus/devx/cmd/devgen@latest
@@ -18,8 +18,18 @@ go run ./cmd/devgen <command>
 
 ## 快速开始
 
+在 **业务仓** Go 模块根目录 (与 `go.mod` 同级):
+
 ```bash
-# 1. 在 Go 模块根目录初始化配置(生成 .devx/config.json)
+# 0. (可选) 将 go.mod 中 // +skill:* 依赖安装到 .agents/skills/
+go tool skill-install
+
+# 0b. (可选) 在模块根运行 devgen, 将 .cursor/.claude 指向本仓 .agents; 用户级内嵌 platform skills 写入 ~/
+devgen skill install   # 默认在本模块根创建 .cursor/.claude → .agents
+# devgen skill install --path ..   # 在 --path 目录创建桥接 (源仍为 cwd 下的 .agents)
+# devgen skill install --name cursor
+
+# 1. 初始化 devgen 配置
 devgen init
 
 # 2. 按需编辑 .devx/config.json(target,镜像,依赖工具等)
@@ -32,6 +42,17 @@ make test
 make target_<name>    # 构建单个 cmd 产物到 dist/<name>/
 make image_<name>     # 构建 Docker 镜像(需 target 配置了 image)
 ```
+
+### Agent skills
+
+| 步骤     | 命令                    | 作用                                                                               |
+|----------|-------------------------|------------------------------------------------------------------------------------|
+| 项目内   | `go tool skill-install` | genx: 按 `go.mod` 的 `// +skill:*` 填充 `.agents/skills/`                          |
+| 用户 IDE | `devgen skill install`  | 须在 **go.mod 同级** 执行; 项目 skill 仅来自 **`.agents`** (`.cursor`/`.claude` 为指向它的 symlink); 内嵌 platform skills → `~/…/skills/` |
+
+`--path` 指定 **桥接 symlink 的安装目录** (默认模块根), 不改变 `.agents` 来源.
+
+项目级 SKILLs 安装说明参见: [genx skills 安装说明](https://github.com/xoctopus/genx/blob/main/.agents/skills/genx/references/skills-installation.spec.md)
 
 `devgen all` 会依次生成:
 
@@ -51,9 +72,15 @@ make image_<name>     # 构建 Docker 镜像(需 target 配置了 image)
 
 ```json
 {
-  "ci": { "CI": true },
-  "make": { ... },
-  "lint": { "lint": true }
+	"ci": {
+		"CI": true
+	},
+	"make": {
+		...
+	},
+	"lint": {
+		"lint": true
+	}
 }
 ```
 
@@ -69,17 +96,17 @@ make image_<name>     # 构建 Docker 镜像(需 target 配置了 image)
 | `depends`            | `[]Tool`   | 额外开发依赖工具(与默认工具合并)               |
 | `target`             | `[]Target` | `cmd/<name>` 构建目标                          |
 
-未配置时,`init` 会写入与 devx 自身相近的默认值(test/format ignore,`GOWORK=off`,golangci-lint 等).
+未配置时,`init` 会写入与 devx 自身相近的默认值 (test/format ignore,`GOWORK=off`,golangci-lint 等).
 
 #### `depends` / `Tool`
 
 ```json
 {
-  "name": "golangci-lint",
-  "repo": "github.com/golangci/golangci-lint/v2/cmd/golangci-lint",
-  "version": "latest",
-  "type": "LINTER",
-  "description": "code static checking"
+	"name": "golangci-lint",
+	"repo": "github.com/golangci/golangci-lint/v2/cmd/golangci-lint",
+	"version": "latest",
+	"type": "LINTER",
+	"description": "code static checking"
 }
 ```
 
@@ -91,15 +118,17 @@ make image_<name>     # 构建 Docker 镜像(需 target 配置了 image)
 
 ```json
 {
-  "name": "demo",
-  "image": {
-    "runtime": "alpine:latest",
-    "timezone": "Asia/Shanghai",
-    "cgo_enabled": false,
-    "go_proxy": "https://goproxy.cn,direct",
-    "expose": "80",
-    "run_args": ["run"]
-  }
+	"name": "demo",
+	"image": {
+		"runtime": "alpine:latest",
+		"timezone": "Asia/Shanghai",
+		"cgo_enabled": false,
+		"go_proxy": "https://goproxy.cn,direct",
+		"expose": "80",
+		"run_args": [
+			"run"
+		]
+	}
 }
 ```
 
@@ -117,7 +146,9 @@ make image_<name>     # 构建 Docker 镜像(需 target 配置了 image)
 ### `lint`
 
 ```json
-{ "lint": true }
+{
+	"lint": true
+}
 ```
 
 为 `false` 时不生成 `.golangci.yml`.
@@ -125,25 +156,30 @@ make image_<name>     # 构建 Docker 镜像(需 target 配置了 image)
 ### `ci`
 
 ```json
-{ "CI": true }
+{
+	"CI": true
+}
 ```
 
 为 `false` 时不生成 GitHub workflows 与 dependabot.
 
 ## 命令
 
-| 命令          | 说明                                   |
-|---------------|----------------------------------------|
-| `devgen init` | 创建 `.devx/config.json`(已存在则跳过) |
-| `devgen show` | 打印当前配置;无文件时等同 `init`       |
-| `devgen all`  | `init` + 按配置生成全部产物(**常用**)  |
-| `devgen make` | 仅生成 Makefile 与 target 相关文件     |
-| `devgen lint` | 仅生成 `.golangci.yml`                 |
-| `devgen ci`   | 仅生成 `.github` 下 CI 配置            |
+| 命令                   | 说明                                                                   |
+|------------------------|------------------------------------------------------------------------|
+| `devgen init`          | 创建 `.devx/config.json`(已存在则跳过)                                 |
+| `devgen show`          | 打印当前配置;无文件时等同 `init`                                       |
+| `devgen all`           | `init` + 按配置生成全部产物(**常用**)                                  |
+| `devgen make`          | 仅生成 Makefile 与 target 相关文件                                     |
+| `devgen lint`          | 仅生成 `.golangci.yml`                                                 |
+| `devgen ci`            | 仅生成 `.github` 下 CI 配置                                            |
+| `devgen skill install` | 在 `--path`(默认模块根) 创建 `.cursor`/`.claude` → 模块 `.agents`; 内嵌 platform skills → `$HOME` (项目 skill 需先 `go tool skill-install`) |
 
 `all` 支持 `--file` 指定配置文件,默认 `.devx/config.json`.
 
-子命令 `make` / `lint` / `ci` 也可通过命令行 flags 覆盖配置字段(见 `devgen make -h`).
+`skill install` 须在含 `go.mod` 的目录执行; 支持 `--path` 与 `--name cursor|claude|codex`.
+
+子命令 `make` / `lint` / `ci` 也可通过命令行 flags 覆盖配置字段 (见 `devgen make -h`).
 
 ## 生成后的 Makefile 用法
 
@@ -184,7 +220,7 @@ dist/demo/
 
 ## 版本信息注入
 
-target 构建通过 **ldflags** 写入 `main` 包变量(需在 `cmd/<name>/main.go` 中声明同名变量):
+target 构建通过 **ldflags** 写入 `main` 包变量 (需在 `cmd/<name>/main.go` 中声明同名变量):
 
 - `Name`,`Feature`(分支),`Version`(tag),`CommitID`,`CommitAt`,`BuildAt`
 
@@ -202,7 +238,8 @@ target 构建通过 **ldflags** 写入 `main` 包变量(需在 `cmd/<name>/main.
 1. **builder**:`make target_<name>`,产物打包到 `/out/`
 2. **runtime**:`COPY --from=builder`,二进制安装为 `/app/app`
 
-设计为兼容 **Kaniko** 等无 Docker daemon 环境:使用经典 `COPY --from` 与普通 `RUN`,避免 heredoc,`RUN --mount` 等 BuildKit 高级写法.
+设计为兼容
+**Kaniko** 等无 Docker daemon 环境:使用经典 `COPY --from` 与普通 `RUN`,避免 heredoc,`RUN --mount` 等 BuildKit 高级写法.
 
 构建前会 `test -x` 校验二进制,避免"镜像构建成功但缺少 `/app/app`"导致 Pod 启动失败.
 
@@ -220,16 +257,16 @@ docker build -f cmd/demo/Dockerfile .
 .
 ├── .devx/
 │   └── config.json
-├── Makefile
+├── Makefile              # 顶层Makefile
 ├── cmd/
-│   ├── demo/
+│   ├── demo/             # Target 入口目录
 │   │   ├── main.go
-│   │   ├── Makefile      # devgen 生成
+│   │   ├── Makefile      # cmd层Makefile (可由 devgen 生成)
 │   │   ├── Dockerfile    # 配置了 image 时生成
 │   │   └── config/       # 可选,会打进 dist 与镜像
 │   └── devgen/
 │       └── Makefile
-├── dist/
+├── dist/                 # Target 构建结果
 │   └── demo/
 └── .github/workflows/
 ```

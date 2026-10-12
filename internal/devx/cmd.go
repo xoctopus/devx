@@ -4,6 +4,8 @@ package devx
 
 import (
 	"github.com/spf13/cobra"
+
+	"github.com/xoctopus/devx/internal/devx/skills"
 )
 
 var root = &cobra.Command{Use: "devgen"}
@@ -15,6 +17,7 @@ func init() {
 	root.AddCommand(CmdCI)
 	root.AddCommand(CmdInit)
 	root.AddCommand(CmdShow)
+	root.AddCommand(skills.Cmd)
 }
 
 func Command() *cobra.Command {
