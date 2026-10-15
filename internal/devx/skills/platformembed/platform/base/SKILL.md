@@ -21,6 +21,7 @@ description: >-
 2. 中文英文选择按照仓库惯例
 3. 如果是中文, 使用半角标点, 切勿使用全角标点. 
 4. 多个改动点提交格式例子如下: summary 和 detail 需要提炼重点, 切勿啰嗦.
+5. 给两个结果 1) 命令行 2) 提交信息文案
 
 ```
 git commit -m "feat(module): summary mainly" \
@@ -28,4 +29,5 @@ git commit -m "feat(module): summary mainly" \
 - change detail 2
 ..."
 ```
-5. 通常不要主动做提交动作, 除非明确要求
+
+6. 通常不要主动做提交动作, 除非明确要求
