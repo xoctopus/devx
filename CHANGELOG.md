@@ -1,11 +1,18 @@
 
 <a name="HEAD"></a>
-## [HEAD](https://github.com/xoctopus/devx/compare/v0.6.8...HEAD)
+## [HEAD](https://github.com/xoctopus/devx/compare/v0.6.9...HEAD)
 
-> 2026-10-15
+> 0001-01-01
+
+
+<a name="v0.6.9"></a>
+## [v0.6.9](https://github.com/xoctopus/devx/compare/v0.6.8...v0.6.9)
+
+> 2026-10-27
 
 ### Chore
 
+* **devx:** bump go to 1.27.3 and add code simplicity rules to base skill
 * **devx:** enable modernize in golangci template and refresh base skill
 
 
