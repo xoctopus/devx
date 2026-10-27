@@ -53,7 +53,7 @@ func TestTargetDockerfileTemplateRunArgs(t *testing.T) {
 	var buf bytes.Buffer
 	Expect(t, gTargetTplDockerfile.Execute(&buf, map[string]any{
 		"Name":       "demo",
-		"GoVersion":  "1.27.0",
+		"GoVersion":  "1.27.3",
 		"Runtime":    "alpine:latest",
 		"CgoEnabled": "0",
 		"Expose":     "80",
@@ -64,7 +64,7 @@ func TestTargetDockerfileTemplateRunArgs(t *testing.T) {
 	buf.Reset()
 	Expect(t, gTargetTplDockerfile.Execute(&buf, map[string]any{
 		"Name":       "demo",
-		"GoVersion":  "1.27.0",
+		"GoVersion":  "1.27.3",
 		"Runtime":    "alpine:latest",
 		"CgoEnabled": "0",
 	}), Succeed())

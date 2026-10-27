@@ -1,6 +1,6 @@
 module github.com/xoctopus/devx
 
-go 1.27.0
+go 1.27.3
 
 tool (
 	github.com/xoctopus/devx/internal/cmd/gen

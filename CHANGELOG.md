@@ -1,8 +1,22 @@
 
 <a name="HEAD"></a>
-## [HEAD](https://github.com/xoctopus/devx/compare/v0.6.7...HEAD)
+## [HEAD](https://github.com/xoctopus/devx/compare/v0.6.8...HEAD)
 
-> 0001-01-01
+> 2026-10-15
+
+### Chore
+
+* **devx:** enable modernize in golangci template and refresh base skill
+
+
+<a name="v0.6.8"></a>
+## [v0.6.8](https://github.com/xoctopus/devx/compare/v0.6.7...v0.6.8)
+
+> 2026-10-12
+
+### Fix
+
+* **devgen:** embed platform skills paths on Windows
 
 
 <a name="v0.6.7"></a>
